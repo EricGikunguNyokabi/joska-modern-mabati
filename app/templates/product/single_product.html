@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Product Details - {{ product.product_name | capitalize }}{% endblock %}
+
+{% block content %}
+<style>
+    .card {
+        border-style: none;
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mt-2">
+            <li class="breadcrumb-item"><a href="{{ url_for('ecommerce.home') }}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('ecommerce.home') }}">Products</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ product.product_name | capitalize }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-9">
+            <div class="card mb-3">
+                <div class="row">
+                    <div class="col-md-5">
+                        <img src="{{ url_for('static', filename=product.product_image_path.split('static/', 1)[-1]) }}" class="card-img-top" alt="{{ product.product_name }}">
+                    </div>
+
+                    <div class="col-md-5 p-4">
+                        <h5><span style="font-weight: 700; font-size: 0.5em;">Product :</span> {{ product.product_name }}</h5>
+                        <p class="card-text"><span style="font-weight: 700; font-size: 0.7em;">Description :</span> {{ product.product_description }}</p>
+                        <h4 class="py-1 text-info">KSh. {{ "{:,.2f}".format(product.product_cost) }}</h4>
+
+                        <!-- Form for Quantity and Add to Cart Button -->
+                        <form id="addToCartForm" method="POST" action="{{ url_for('ecommerce.home', product_id=product.product_id) }}">
+                            <div>
+                                <label for="">
+                                    <h5>Total Price: <span id="totalPrice">KSh. {{ "{:,.2f}".format(product.product_cost) }}</span></h5>
+                                    <input type="number" name="total_product_price" id="total_product_price" value="{{ product.product_cost }}" hidden>
+                                    <input type="hidden" name="unit_price" value="{{ product.product_cost }}">
+                                    <input type="hidden" name="product_name" value="{{ product.product_name }}">
+                                    <input type="hidden" name="image_src" value="{{ product.product_image_path }}">
+                                </label>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary form-control" id="addToCartBtn">Add to Cart</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col mt-0 d-flex justify-content-start">
+                            <a href="{{ url_for('ecommerce.add_product_details') }}" class="btn btn-small btn-primary">Back to Products</a>
+                        </div>
+                        <div class="col mt-0 d-flex justify-content-end">
+                            <a href="{{ url_for('ecommerce.home') }}" class="btn btn-small btn-success">Go to My Cart</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="row mt-0">
+                <img src="{{ url_for('static', filename='images/equity-paybill.jpeg') }}" alt="Paybill Information" class="w-100" style="height: 40vh;">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

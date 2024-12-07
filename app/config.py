@@ -5,3 +5,4 @@ class Config:
     SECRET_KEY = config("SECRET_KEY", default="fallback_secret_key")
     SQLALCHEMY_DATABASE_URI = config("DATABASE_URI", default="mysql+pymysql://root:@localhost/joskamodernmabati") 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    UPLOAD_FOLDER = "app/static/images/products"

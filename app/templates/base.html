@@ -57,7 +57,7 @@
         <!-- First Row -->
         <div class="header-top py-2 px-3 d-flex justify-content-between align-items-center">
             <a class="navbar-brand d-flex align-items-center" href="{{ url_for('ecommerce.home') }}">
-                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Joska Modern Mabati Logo" style="height: 40px; margin-right: 10px;">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Joska Modern Mabati Logo" style="height: 40px; margin-right: 10px;" class="rounded-3">
                 <span class="brand-name fw-bold">Joska Modern Mabati</span>
             </a>
             <div>
@@ -76,12 +76,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="{{ url_for('ecommerce.home') }}">
                             <i class="fas fa-box"></i> Products
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="{{ url_for('cart.cart') }}">
                             <i class="fas fa-shopping-cart"></i> Cart
                         </a>
                     </li>
@@ -103,10 +103,118 @@
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="bg-primary text-light text-center py-3">
-        <p>&copy; {{ current_year }} Joska Modern Mabati. All rights reserved.</p>
-        <p>Visit us at <a href="http://www.joskamodernmabati.com" class="text-light">www.joskamodernmabati.com</a></p>
-    </footer>
+<!-- <div class=" my-1" style="margin-top: 10vh;"> -->
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        footer {
+            margin-top: auto;
+            width: 100%;
+        }
+    </style>
+        <footer class="container-fluid text-white text-center text-lg-start" style="background-color: #1f3197;">
+          <!-- Grid container -->
+          <div class="container-fluid px-5 py-1">
+            <!--Grid row-->
+            <div class="row mt-4">
+              <!--Grid column-->
+              <div class="col-lg-4 col-md-12 mb-2 mb-md-0">
+                <h5 class="text-uppercase mb-4" style="font-weight: 700;">What Joska Mabati Offers?</h5>
+      
+                <p>
+                    We offer different mabati profiles including Roman tile, Box profile, Brick tile, Corrugated profile, Euro tile, Z-tile, Crimpled roofing, Roof water harvesting accessories and many more
+                </p>
+    <!--             
+                <h5><b>We also produce;</b></h5>
+                <p>
+                    Rolltops, Ridges, Valleys, Badge box, Side wall flashers, Stone coated accessories and many others.
+                </p> -->
+    
+      
+                <div class="mt-4">
+                    <!-- Facebook -->
+                    <a type="button" class="btn btn-floating btn-primary btn-lg" href="https://www.facebook.com" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <!-- Twitter -->
+                    <a type="button" class="btn btn-floating btn-dark btn-lg" href="https://www.twitter.com" target="_blank"><i class="fab fa-twitter"></i></a>
+                    <!-- Whatsapp -->
+                    <a type="button" class="btn btn-floating btn-success btn-lg" href="https://wa.me/254757398722?text=I%20Want%20to%20Order" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                  </div>
+                  
+    
+              </div>
+              <!--Grid column-->
+      
+              <!--Grid column-->
+              <div class="col-lg-4 col-md-6 mb-2 mb-md-0">
+                <h5 class="text-uppercase mb-4 pb-1" style="font-weight: 700;">Contact Details</h5>
+      
+                <div class="form-outline form-white mb-4">
+                  <!-- <input type="text" id="formControlLg" class="form-control form-control-lg"> -->
+                  <!-- <label class="form-label" for="formControlLg" style="margin-left: 0px;">Search</label> -->
+                <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 48.8px;"></div><div class="form-notch-trailing"></div></div></div>
+      
+                <ul class="fa-ul" style="margin-left: 1.65em;">
+                  <li class="mb-3">
+                    <span class="fa-li"><i class="fas fa-home"></i></span><p class="ms-auto">Joska Mabati Distributers</p>
+                  </li>
+                  <li class="mb-3">
+                    <span class="fa-li"><i class="fas fa-envelope"></i></span><p class="ms-auto">joskamodernmabati@gmail.com</p>
+                  </li>
+                  <li class="mb-3">
+                    <span class="fa-li"><i class="fas fa-phone"></i></span><p class="ms-auto"><a class="text-white" href="tel:+254757398722">+254-757-398-722</a></p>
+                  </li>
+                </ul>
+              </div>
+              <!--Grid column-->
+      
+              <!--Grid column-->
+              <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                <h5 class="text-uppercase mb-4" style="font-weight: 700;">Location</h5>
+      
+                <!-- Embedded Google Map -->
+                <div class="map-container mt-3">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3996.7092711012066!2d36.891504975018634!3d-1.3258730359878646!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x183fbb545a2b9b89%3A0x3c98a67f212df5a8!2sCabanas%2C%20Mombasa%20Road%2C%20Nairobi!5e0!3m2!1sen!2ske!4v1694945932201!5m2!1sen!2ske" 
+                        width="100%" 
+                        height="250" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+              </div>
+              <!--Grid column-->
+            </div>
+            <!--Grid row-->
+          </div>
+          <!-- Grid container -->
+      
+          <!-- Copyright -->
+          <div class="row">
+            <div class="col">
+                <div class="row">
+                    <div class="col">
+                        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+                            Copyright &copy; Joska Mabati Distributers 
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="row justify-content-center">
+                    <div class="col">
+                        Built by V-TECHNOLOGIES
+                    </div>
+                </div> -->
+            </div>
+          </div>
+          <!-- Copyright -->
+        </footer>
+        
+      <!-- </div> -->
+      <!-- End of .container -->
 
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.js') }}"></script>
 

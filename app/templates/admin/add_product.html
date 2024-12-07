@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+
+
+{% block title %}Add Product{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card mt-5 mb-5">
+                <div class="card-header text-center"><h4>Product Detail Upload</h4></div>
+                <div class="card-body">
+
+                        <form action="{{ url_for('ecommerce.add_product_details') }}" method="POST" enctype="multipart/form-data">
+                            {% if message or error %}
+                                {% if message %}
+                                    <div class="alert alert-success" role="alert">
+                                        {{ message }}
+                                    </div>
+                                {% else %}
+                                    <div class="alert alert-danger" role="alert">
+                                        {{ error }}
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                            <div class="form-group">
+                                <label for="product_category">Category</label>
+                                <input type="text" name="product_category" id="product_category" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="product_name">Product Name</label>
+                                <input type="text" name="product_name" id="product_name" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="product_description">Description</label>
+                                <textarea name="product_description" id="product_description" class="form-control"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="product_cost">Cost</label>
+                                <input type="number" step="0.01" name="product_cost" id="product_cost" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="product_image_path">Image</label>
+                                <input type="file" name="product_image_path" id="product_image_path" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-3">Upload Product</button>
+                        </form>
+
+                        
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

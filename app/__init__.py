@@ -26,7 +26,7 @@ def create_app():
 
     @login_manager.user_loader
     def load_user(user_id):
-        from app.models import User
+        from app.models.user import User
         return User.query.get(int(user_id))  # Load user by ID
 
     # Register blueprints
@@ -38,10 +38,8 @@ def create_app():
     app.register_blueprint(cart_blueprint)
     app.register_blueprint(ecommerce_blueprint)
 
-    with app.app_context():
-        db.create_all()
-
     return app
+
 # flask db init
 # flask db migrate -m "Initial migration."
 # flask db upgrade
