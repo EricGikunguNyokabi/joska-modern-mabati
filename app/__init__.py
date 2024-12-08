@@ -15,6 +15,12 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object("app.config.Config")  # Load configuration from Config class
 
+
+    # Context Processor to make company_name globally available in templates
+    @app.context_processor
+    def inject_company_name():
+        return {'company_name': app.config['COMPANY_NAME']}
+
     # Initialize extensions with the app
     db.init_app(app)
     migrate.init_app(app, db)
@@ -30,10 +36,12 @@ def create_app():
         return User.query.get(int(user_id))  # Load user by ID
 
     # Register blueprints
+    from app.views import main as main_blueprint
     from app.views.auth import auth as auth_blueprint
     from app.views.cart import cart_bp as cart_blueprint
     from app.views.products import ecommerce as ecommerce_blueprint
 
+    app.register_blueprint(main_blueprint)
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(cart_blueprint)
     app.register_blueprint(ecommerce_blueprint)

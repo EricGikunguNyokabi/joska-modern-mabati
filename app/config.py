@@ -6,3 +6,4 @@ class Config:
     SQLALCHEMY_DATABASE_URI = config("DATABASE_URI", default="mysql+pymysql://root:@localhost/joskamodernmabati") 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     UPLOAD_FOLDER = "app/static/images/products"
+    COMPANY_NAME = "Joska Modern Mabati"

@@ -11,6 +11,11 @@ def home():
     products = Product.query.all()  # Fetch all products from the database
     return render_template('home.html', products=products)
 
+@ecommerce.route('/products')
+def all_products():
+    products = Product.query.all()  # Fetch all products from the database
+    return render_template('product/all_products.html', products=products)
+
 
 @ecommerce.route("/product/add-product", methods=["POST", "GET"])
 def add_product_details():
