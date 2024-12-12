@@ -32,7 +32,7 @@ header .nav-link:hover {
 
 
 /* CATEGORY */
-.category-container {
+/* .category-container {
   display: flex;
   gap: 1.5rem;
   justify-content: center;
@@ -71,4 +71,7 @@ header .nav-link:hover {
 }
 .product-grid {
   margin-top: 2rem;
+} */
+body{
+  background-color: rgba(242, 245, 239, 0.774);
 }

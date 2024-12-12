@@ -69,7 +69,7 @@
             <div>
                 <span class="fa-li"><i class="fab fa-whatsapp"></i></span><p class="ms-auto"><a class="text-light" href="https://wa.me/254757398722?text=I%20Want%20to%20Order" target="_blank">
                 <!-- Whatsapp -->
-                <a type="button" class="btn btn-floating btn-success btn-sm rounded-5" href="https://wa.me/254757398722?text=I%20Want%20to%20Order" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                <a type="button" class="btn btn-floating btn-sm rounded-5 me-0 " style="background-color: rgba(0,255,0,.5);" href="https://wa.me/254757398722?text=I%20Want%20to%20Order" target="_blank"><i class="fab fa-whatsapp"></i><i  class="ms-1 text-light">How can we help?</i></a>
             </div>
         </div>
 
@@ -103,9 +103,17 @@
 
        <!-- Static Hero Image -->
         {% block homecarousel %}
-            <div class="hero-image mt-0">
-                <img src="{{ url_for('static', filename='images/carousel2.png') }}" class="d-block w-100 home-img" style="max-height: 60vh;" alt="Welcome Image">
+        <div class="home-bg-img-1 d-flex flex-column justify-content-center align-items-center text-center text-white">
+            <h1 class="fw-bold mb-3">Joska Modern Mabati</h1>
+            <div>
+                <a href="" class="btn fw-bold text-light" style="background-color: rgba(128, 0, 128, .6); ">Shop here</a>
             </div>
+        </div>
+        
+        
+            <!-- <div class="hero-image mt-0">
+                <img src="{#{ url_for('static', filename='images/carousel2.png') }#}" class="d-block w-100 home-img" style="max-height: 60vh;" alt="Welcome Image">
+            </div> -->
         {% endblock %}
 
     <main class="container-fluid my-2">

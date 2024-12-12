@@ -3,44 +3,123 @@
 {% block title %}Joska Modern Mabati{% endblock %}
 
 
-
 {% block content %}
 <style>
-    h1{
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        font-size: 4em;
+    .home-bg-img-1 {
+        background: linear-gradient(rgba(156, 139, 139, 0.1), rgba(133, 119, 119, 0.3)), 
+        url('{{ url_for("static", filename="images/main-carousel.jpeg") }}') no-repeat center center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        height: 45vh; /* Adjust height as needed */
+        color: white;
+        font-family: monospace;
+        text-transform: uppercase;
+        font-size: 3em;
         font-weight: 900;
     }
+    /* .home-bg-img-2 {
+        background: linear-gradient(rgba(179, 16, 201, 0.9), rgba(165, 10, 185, 0.9)), 
+        url('{{ url_for("static", filename="images/category/Roofing.webp") }}');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        height: fit-content; 
+    }  */
 </style>
 
 <!-- Categories Section -->
-<div class="category-container">
-    {% for category in categories %}
-    <a href="{{ url_for('ecommerce.category_products', category_id=category.category_id) }}" class="category-card">
-        <img src="{{ url_for('static', filename=category.category_image_path.split('static/', 1)[-1]) }}" alt="{{ category.category_name }}">
-        <p>{{ category.category_name }}</p>
-    </a>
-    {% endfor %}
+    <!-- Categories Section -->
+
+<div class="container mt-4 home-bg-img-2">
+    <div class="row row-cols-2 row-cols-md-3 g-4">
+        {% for category in categories %}
+        <div class="col">
+            <a href="{{ url_for('ecommerce.category_products', category_id=category.category_id) }}" class="text-decoration-none text-dark">
+                <div class="card h-100 shadow-sm">
+                    <!-- Image Section -->
+                    <img src="{{ url_for('static', filename=category.category_image_path.split('static/', 1)[-1]) }}" 
+                         alt="{{ category.category_name }}" 
+                         class="card-img-top" style="min-height: 20vh;">
+                    
+                    <!-- Card Body Section -->
+                    <div class="card-body bg-light d-flex align-items-center justify-content-center p-0" style="height:fit-content; font-family: monospace;">
+                        <h5 class="card-title fw-bold m-0">{{ category.category_name | upper }}</h5>
+                    </div>
+                    
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 
 
-<!-- Product Cards -->
-<div class="row row-cols-2 row-cols-md-5 g-2 my-4">
-    {% for product in products %}
-    <div class="col">
-        <div class="card h-100 shadow-sm">
-            <img src="{{ url_for('static', filename=product.product_image_path) }}" class="card-img-top w-100" alt="{{ product.product_name }}" style="min-height: 250px;">
-            <div class="card-body">
-                <h5 class="card-title">{{ product.product_name | title }}</h5>
-                <!-- Price and Button in the same row -->
-                <div class="d-flex justify-content-between align-items-center">
-                    <!-- <p class="card-text"><strong>Price: Ksh {#{ product.product_cost }#}</strong></p> -->
-                    <a href="{{ url_for('ecommerce.single_product_detail', product_id=product.product_id) }}" class="text-primary">View Details</a>
+
+<hr class="border-0" style="height: 2px; background-color: #000;">
+
+<!-- <hr style="background-color: #17a2b8; height: 5px; border: none;"> -->
+<!-- Products Section -->
+<div class="container-fluid my-4">
+    <!-- Header Section -->
+    <div class="text-center mb-4">
+        <style>
+            .underline-effect {
+                position: relative;
+                text-decoration: none;
+                display: inline-block;
+                font-weight: 800;
+            }
+            .underline-effect::after {
+                content: '';
+                width: 0%;
+                height: 3px;
+                background: #f44336; /* Red underline */
+                position: absolute;
+                bottom: -5px; /* Adjust distance from the text */
+                left: 0;
+                right: 0;
+                margin: auto;
+                transition: width 0.6s ease; /* Smooth transition */
+            }
+            .underline-effect:hover::after {
+                width: 100%; /* Expands underline on hover */
+            }
+        </style>
+        <h2 class="underline-effect">OUR PRODUCTS</h2>
+    </div>
+    
+    <!-- Products Grid -->
+    <div class="row row-cols-2 row-cols-md-5 g-2">
+        {% for product in products %}
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <!-- Product Image -->
+                <img src="{{ url_for('static', filename=product.product_image_path) }}" 
+                     class="card-img-top w-100" 
+                     alt="{{ product.product_name }}" 
+                     style="min-height: 250px;">
+                     
+                <!-- Product Details -->
+                <div class="card-body">
+                    <h5 class="card-title" 
+                        style="font-family: monospace; font-size: 1em; word-wrap: break-word; white-space: normal; font-weight: 800;">
+                        {{ product.product_name | upper }}
+                    </h5>
+                    
+                    <!-- Price and Button -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <!-- <p class="card-text"><strong>Price: Ksh {#{ product.product_cost }#}</strong></p> -->
+                        <a href="{{ url_for('ecommerce.single_product_detail', product_id=product.product_id) }}" 
+                           class="text-primary">
+                           View Product
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
+
 
 {% endblock %}
