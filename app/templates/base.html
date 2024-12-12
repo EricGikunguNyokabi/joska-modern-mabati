@@ -9,19 +9,21 @@
     <link rel="icon" href="{{ url_for('static', filename='images/logo.png') }}" type="image/png">
 
     <!-- Add Font Awesome CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
     
     <style>
         /* First row styling with opacity */
         .header-top {
-            background-color: rgba(0, 123, 255, 0.8); /* Subtle bluish color with opacity */
+            background-color: rgba(128, 0, 128, 0.8); /* Purple color with opacity */
             color: white;
             transition: background-color 0.3s ease; /* Smooth transition */
         }
 
         /* Second row styling with a lighter opacity */
         .header-nav {
-            background-color: rgba(0, 123, 255, 0.6); /* Lighter bluish tone with opacity */
+            background-color: rgba(128, 0, 128, 0.4); /* Lighter purple tone with opacity */
             color: white;
             transition: background-color 0.3s ease; /* Smooth transition */
         }
@@ -43,11 +45,15 @@
 
         /* Solid background when scrolled */
         .scrolled .header-top {
-            background-color: rgba(0, 123, 255, 1); /* Solid bluish color when scrolling */
+            background-color: rgba(128, 0, 128, 1); /* Solid purple color when scrolling */
         }
 
         .scrolled .header-nav {
-            background-color: rgba(0, 123, 255, 1); /* Solid bluish color when scrolling */
+            background-color: rgba(128, 0, 128, 1); /* Solid purple color when scrolling */
+        }
+
+        footer {
+            background-color: rgba(128, 0, 128, 0.6); /* Purple color with opacity */
         }
     </style>
 </head>
@@ -61,34 +67,46 @@
                 <span class="brand-name fw-bold"> {{ company_name }} </span>
             </a>
             <div>
-                <a class="btn btn-outline-light btn-sm me-2 p-1" href="{{ url_for('auth.login') }}">Login</a>
-                <a class="btn btn-light btn-sm p-1" href="{{ url_for('auth.register') }}">Register</a>
+                <span class="fa-li"><i class="fab fa-whatsapp"></i></span><p class="ms-auto"><a class="text-light" href="https://wa.me/254757398722?text=I%20Want%20to%20Order" target="_blank">
+                <!-- Whatsapp -->
+                <a type="button" class="btn btn-floating btn-success btn-sm rounded-5" href="https://wa.me/254757398722?text=I%20Want%20to%20Order" target="_blank"><i class="fab fa-whatsapp"></i></a>
             </div>
         </div>
 
         <!-- Second Row -->
-        <nav class="header-nav py-0">
-            <div class="container d-flex justify-content-center">
-                <ul class="nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('ecommerce.home') }}">
-                            <i class="fas fa-home"></i> Home
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('ecommerce.all_products') }}">
-                            <i class="fas fa-box"></i> Products
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('cart.cart') }}">
-                            <i class="fas fa-shopping-cart"></i> Cart
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+<nav class="header-nav py-0">
+    <div class="container d-flex justify-content-between align-items-center">
+        <!-- Centered Links -->
+        <ul class="nav mx-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('ecommerce.home') }}">
+                    <i class="fas fa-home"></i> Home
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('ecommerce.all_products') }}">
+                    <i class="fas fa-box"></i> Products
+                </a>
+            </li>
+        </ul>
+        <!-- Cart at the End -->
+        <div class="ms-auto">
+            <a class="nav-link" href="{{ url_for('cart.cart') }}">
+                <i class="fas fa-shopping-cart"></i> Cart
+            </a>
+        </div>
+    </div>
+</nav>
+
+
     </header>
+
+       <!-- Static Hero Image -->
+        {% block homecarousel %}
+            <div class="hero-image mt-0">
+                <img src="{{ url_for('static', filename='images/carousel2.png') }}" class="d-block w-100 home-img" style="max-height: 60vh;" alt="Welcome Image">
+            </div>
+        {% endblock %}
 
     <main class="container-fluid my-2">
         {% with messages = get_flashed_messages() %}
@@ -102,6 +120,7 @@
         {% endwith %}
         {% block content %}{% endblock %}
     </main>
+ 
 
 <!-- <div class=" my-1" style="margin-top: 10vh;"> -->
     <style>
@@ -115,14 +134,14 @@
             width: 100%;
         }
     </style>
-        <footer class="container-fluid text-white text-center text-lg-start" style="background-color: rgba(0, 123, 255, 1)">
+        <footer class="container-fluid text-white text-center text-lg-start">
           <!-- Grid container -->
           <div class="container-fluid px-5 py-1">
             <!--Grid row-->
             <div class="row mt-4">
               <!--Grid column-->
               <div class="col-lg-4 col-md-12 mb-2 mb-md-0">
-                <h5 class="text-uppercase mb-4" style="font-weight: 700;">Joska Mabati Offers</h5>
+                <h5 class="text-uppercase mb-4" style="font-weight: 700;">Joska Modern Mabati Offers</h5>
       
                 <p>
                     We offer different mabati profiles including Roman tile, Box profile, Brick tile, Corrugated profile, Euro tile, Z-tile, Crimpled roofing, Roof water harvesting accessories and many more
@@ -157,17 +176,21 @@
                 <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 48.8px;"></div><div class="form-notch-trailing"></div></div></div>
       
                 <ul class="fa-ul" style="margin-left: 1.65em;">
-                  <li class="mb-3">
-                    <span class="fa-li"><i class="fas fa-home"></i></span><p class="ms-auto">{{ company_name }}</p>
+                  <li class="mb-3 text-light">
+                    <a href="{{ company_url }}">
+                        <span class="fa-li"><i class="fas fa-home"></i></span><p class="ms-auto">{{ company_name }}</p>
+                    </a>
                   </li>
                   <li class="mb-3">
-                    <span class="fa-li"><i class="fas fa-envelope"></i></span><p class="ms-auto">joskamodernmabati@gmail.com</p>
+                    <span class="fa-li"><i class="fas fa-envelope"></i></span><p class="ms-auto"> {{ company_email_1  }}</p>
                   </li>
                   <li class="mb-3">
-                    <span class="fa-li"><i class="fas fa-phone"></i></span><p class="ms-auto"><a class="text-light" href="tel:+254757398722">+254-757-398-722</a></p>
+                    <span class="fa-li"><i class="fas fa-phone"></i></span><p class="ms-auto"><a class="text-light" href="tel:{{ company_phone_1 }}">{{ company_phone_1 }}</a></p>
                   </li>
+
+
                   <li class="mb-3">
-                    <span class="fa-li"><i class="fab fa-whatsapp"></i></span><p class="ms-auto"><a class="text-light" href="https://wa.me/254757398722?text=I%20Want%20to%20Order" target="_blank">+254757398722</a></p>
+                    <span class="fa-li"><i class="fab fa-whatsapp"></i></span><p class="ms-auto"><a class="text-light" href="https://wa.me/254757398722?text=I%20Want%20to%20Order" target="_blank"> {{ company_phone_1 }} </a></p>
                   </li>
                 </ul>
               </div>

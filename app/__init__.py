@@ -1,7 +1,7 @@
 # app/__init__.py
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+from flask_migrate import Migrate # type: ignore
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 
@@ -19,7 +19,12 @@ def create_app():
     # Context Processor to make company_name globally available in templates
     @app.context_processor
     def inject_company_name():
-        return {'company_name': app.config['COMPANY_NAME']}
+        return {'company_name': app.config['COMPANY_NAME'],
+                'company_email': app.config['COMPANY_EMAIL_1'],
+                'company_phone_1': app.config['COMPANY_PHONE_1'],
+                'company_phone_2': app.config['COMPANY_PHONE_2'],
+                'company_url': app.config['COMPANY_URL']
+                }
 
     # Initialize extensions with the app
     db.init_app(app)
