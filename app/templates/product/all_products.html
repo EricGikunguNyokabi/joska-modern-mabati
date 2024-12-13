@@ -8,16 +8,36 @@
 
 
 <!-- Categories Section -->
-<div class="category-container">
-    {% for category in categories %}
-    <a href="{{ url_for('ecommerce.category_products', category_id=category.category_id) }}" class="category-card">
-        <img src="{{ url_for('static', filename=category.category_image_path.split('static/', 1)[-1]) }}" alt="{{ category.category_name }}">
-        <p>{{ category.category_name }}</p>
-    </a>
-    {% endfor %}
+<div class="container mt-4 home-bg-img-2">
+    <div class="row row-cols-3 row-cols-md-3 g-4">
+        {% for category in categories %}
+        <div class="col">
+            <!-- Card Container -->
+            <a href="{{ url_for('ecommerce.category_products', category_id=category.category_id) }}" class="text-decoration-none text-dark">
+                <div class="card h-100 shadow-sm rounded-5">
+                    <!-- Image Section -->
+                    <img src="{{ url_for('static', filename=category.category_image_path.split('static/', 1)[-1]) }}" 
+                         alt="{{ category.category_name }}" 
+                         class="card-img-top" 
+                         style="min-height: 130px; max-height: 130px; object-fit: cover;">
+
+                    <!-- Card Body -->
+                    <div class="card-body py-0 d-flex align-items-center justify-content-center text-center text-light" 
+                         style="height: auto; font-family: monospace; font-size: 0.7em;background-color: rgba(128, 0, 128, 0.7);">
+                        <h5 class="card-title fw-bold m-0">{{ category.category_name | upper }}</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
 </div>
 
-<h5 class="text-center">All Our Products</h5>
+
+<!-- Header Section -->
+<div class="bg-light text-center py-1">
+    <h1 class="text-uppercase fw-bold">All Our Products</h1>
+</div>
 <!-- Product Cards -->
 <div class="row row-cols-2 row-cols-md-5 g-3 product-grid">
     {% for product in products %}

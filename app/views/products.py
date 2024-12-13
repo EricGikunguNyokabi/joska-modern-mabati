@@ -18,12 +18,6 @@ def all_products():
     products = Product.query.all()  # Fetch all products from the database
     return render_template('product/all_products.html',categories=categories, products=products)
 
-@ecommerce.route("/products/category/<int:category_id>")
-def category_products(category_id):
-    category = Category.query.get_or_404(category_id) # Fetch category by id
-    products = Product.query.filter_by(product_category=category.category_id)  # Fetch products in this category
-    return render_template("product/category_products.html", category=category,products=products)
-
 @ecommerce.route("/product/add-product", methods=["POST", "GET"])
 def add_product_details():
     if request.method == "POST":
@@ -134,3 +128,27 @@ def add_category_details():
             return render_template("admin/add_category.html")
 
     return render_template("admin/add_category.html")
+
+
+# @ecommerce.route("/products/category/<int:category_id>")
+# def category_products(category_id):
+#     category = Category.query.get_or_404(category_id) # Fetch category by id
+#     products = Product.query.filter_by(product_category=category.category_id)  # Fetch products in this category
+#     return render_template("product/category_products.html", category=category,products=products)
+
+# Route to display products by category
+@ecommerce.route("/category/<int:category_id>")
+def category_products(category_id):
+    # Query category details
+    category = Category.query.filter_by(category_id=category_id).first_or_404()
+    
+    # Query products associated with this category
+    products = Product.query.filter_by(product_category_id=category_id).all()
+
+    return render_template(
+        "product/category_products.html",
+        category=category,
+        products=products
+    )
+
+

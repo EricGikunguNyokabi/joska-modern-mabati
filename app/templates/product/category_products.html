@@ -1,22 +1,55 @@
 {% extends "base.html" %}
 
-{% block title %}Add Products - Joska Modern Mabati {% endblock %}
+{% block title %}{{ category.category_name }} Products{% endblock %}
 
 {% block homecarousel %} {% endblock %}
 
 {% block content %}
-<h1>{{ category.name }}</h1>
-<div class="row row-cols-2 row-cols-md-5 g-3">
-    {% for product in products %}
-    <div class="col">
-        <div class="card h-100 shadow-sm">
-            <img src="{{ url_for('static', filename=product.product_image_path.split('static/', 1)[-1]) }}" class="card-img-top w-100" alt="{{ product.product_name }}">
-            <div class="card-body">
-                <h5 class="card-title">{{ product.product_name | title }}</h5>
-                <a href="{{ url_for('ecommerce.single_product_detail', product_id=product.id) }}" class="text-primary">View Details</a>
+
+<!-- Header Section -->
+<div class="bg-light text-center py-2">
+    <h1 class="text-uppercase fw-bold">{{ category.category_name }}</h1>
+</div>
+
+<!-- Products Grid Section -->
+<div class="container my-2">
+    <!-- If no products found -->
+    {% if products|length == 0 %}
+        <div class="alert alert-warning text-center" role="alert">
+            No products found in this category.
+        </div>
+    {% else %}
+    <div class="row row-cols-2 row-cols-md-4 g-2">
+        {% for product in products %}
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <!-- Product Image -->
+                <img src="{{ url_for('static', filename=product.product_image_path) }}" 
+                     class="card-img-top w-100" 
+                     alt="{{ product.product_name }}" 
+                     style="min-height: 250px; object-fit: cover;">
+                     
+                <!-- Product Details -->
+                <div class="card-body">
+                    <h5 class="card-title fw-bold text-truncate" 
+                        style="font-family: monospace; font-size: 1em;">
+                        {{ product.product_name | upper }}
+                    </h5>
+                    
+                    <!-- Price and Button -->
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <a href="{{ url_for('ecommerce.single_product_detail', product_id=product.product_id) }}" 
+                           class="btn btn-outline-primary btn-sm">
+                           View Product
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
+        {% endfor %}
     </div>
-    {% endfor %}
+    
+    {% endif %}
 </div>
+
 {% endblock %}

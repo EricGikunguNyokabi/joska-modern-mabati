@@ -75,3 +75,6 @@ header .nav-link:hover {
 body{
   background-color: rgba(242, 245, 239, 0.774);
 }
+.custon-background-color{
+  background-color: rgba(128, 0, 128, 0.8);
+} 
