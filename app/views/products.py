@@ -32,7 +32,8 @@ def add_product_details():
             # Map product category to product_category_id
             category_map = {
                 "Roofing" : 1,
-                "Rain Gutter System" : 2
+                "Gutter System" : 2,
+                "Our Work" : 3
             }
 
             product_category_id = category_map.get(product_category)
@@ -51,7 +52,7 @@ def add_product_details():
 
             # Secure file upload
             image_filename = secure_filename(product_image.filename)
-            upload_folder = current_app.config["UPLOAD_FOLDER"]
+            upload_folder = current_app.config["PRODUCT_UPLOAD_FOLDER"]
             os.makedirs(upload_folder, exist_ok=True)
             image_path = os.path.join(upload_folder, image_filename)
             product_image.save(image_path)

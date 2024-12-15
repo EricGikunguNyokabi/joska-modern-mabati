@@ -10,7 +10,7 @@ class Config:
     PRODUCT_UPLOAD_FOLDER = "app/static/images/products"
     CATEGORY_UPLOAD_FOLDER = "app/static/images/category"
 
-    COMPANY_NAME = "Joska Modern Mabati"
+    COMPANY_NAME = "JOSKA MODERN MABATI"
     COMPANY_PHONE_1 = "+254757398722"
     COMPANY_PHONE_2 = ""
     COMPANY_EMAIL_1 = "joskamodernmabati@gmail.com"

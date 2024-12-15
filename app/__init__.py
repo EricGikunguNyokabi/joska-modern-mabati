@@ -4,8 +4,14 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate # type: ignore
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
+from flask_session import Session # pip install flask-session
+# from flask_wtf.csrf import CSRFProtect
+
+
+
 
 # Initialize extensions
+# csrf = CSRFProtect()
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
@@ -14,6 +20,12 @@ bcrypt = Bcrypt()
 def create_app():
     app = Flask(__name__)
     app.config.from_object("app.config.Config")  # Load configuration from Config class
+    
+
+    # session for cart
+    app.config["SESSION_PERMANENT"] = False # False - treated as session cookie so that when you quit the browser the cookies get deleted.
+    app.config["SESSION_TYPE"] = "filesystem" # THis ensures the content of your session cart are stored n the servers file not the cookie itself for privacy sake
+    Session(app)
 
 
     # Context Processor to make company_name globally available in templates
@@ -27,6 +39,7 @@ def create_app():
                 }
 
     # Initialize extensions with the app
+    # csrf.init_app(app)  # Initialize CSRF protection
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
@@ -43,13 +56,13 @@ def create_app():
     # Register blueprints
     from app.views import main as main_blueprint
     from app.views.auth import auth as auth_blueprint
-    from app.views.cart import cart_bp as cart_blueprint
-    from app.views.products import ecommerce as ecommerce_blueprint
+    from app.views.cart import cart as cart_blueprint
+    from app.views.products import ecommerce as product_blueprint
 
     app.register_blueprint(main_blueprint)
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(cart_blueprint)
-    app.register_blueprint(ecommerce_blueprint)
+    app.register_blueprint(product_blueprint)
 
     return app
 

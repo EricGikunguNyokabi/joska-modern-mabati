@@ -13,7 +13,7 @@
                 <div class="card-header text-light text-center" style="background-color: rgba(108, 117, 125, 0.8);"><h4>Product Upload</h4></div>
                 <div class="card-body">
 
-                        <form action="{{ url_for('ecommerce.add_product_details') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ url_for('products.add_product_details') }}" method="POST" enctype="multipart/form-data">
                             {% if message or error %}
                                 {% if message %}
                                     <div class="alert alert-success" role="alert">
@@ -29,8 +29,10 @@
                                 <label for="product_category">Product Category</label>
                                 <select name="product_category" id="product_category" class="form-control" required>
                                     <option value="" disabled>Select a category</option>
-                                    <option value="Rain Gutter System" {% if product_category == 'Rain Gutter System' %}selected{% endif %}>Rain Gutter System</option>
-                                    <option value="Roofing" {% if product_category == 'Roofing' %}selected{% endif %}>Roofing</option>
+
+                                    <option value="Gutter System">Rain Gutter System</option>
+                                    <option value="Roofing">Roofing</option>
+                                    <option value="Our Work">Our Work</option>
                                     <!-- Add more options as needed -->
                                 </select>
                             </div>

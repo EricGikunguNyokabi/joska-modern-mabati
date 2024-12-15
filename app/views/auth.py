@@ -56,4 +56,4 @@ def profile():
 def logout():
     logout_user()  # Log the user out
     flash('You have been logged out.', 'info')
-    return redirect(url_for('auth.login'))
+    return redirect(url_for('ecommerce.home'))

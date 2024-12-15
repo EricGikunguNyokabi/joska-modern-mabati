@@ -19,35 +19,30 @@
             No products found in this category.
         </div>
     {% else %}
-    <div class="row row-cols-2 row-cols-md-4 g-2">
+    <div class="row row-cols-2 row-cols-md-5 g-3">
         {% for product in products %}
         <div class="col">
-            <div class="card h-100 shadow-sm">
-                <!-- Product Image -->
+            <!-- Product Image -->
+            <div class="card border-1">
+                <a href="{{ url_for('ecommerce.single_product_detail', product_id=product.product_id) }}" 
+               style="text-decoration: none;">
+
                 <img src="{{ url_for('static', filename=product.product_image_path) }}" 
-                     class="card-img-top w-100" 
+                     class="w-100" 
                      alt="{{ product.product_name }}" 
-                     style="min-height: 250px; object-fit: cover;">
-                     
-                <!-- Product Details -->
-                <div class="card-body">
-                    <h5 class="card-title fw-bold text-truncate" 
-                        style="font-family: monospace; font-size: 1em;">
-                        {{ product.product_name | upper }}
-                    </h5>
-                    
-                    <!-- Price and Button -->
-                    <div class="d-flex justify-content-between align-items-center mt-2">
-                        <a href="{{ url_for('ecommerce.single_product_detail', product_id=product.product_id) }}" 
-                           class="btn btn-outline-primary btn-sm">
-                           View Product
-                        </a>
-                    </div>
-                </div>
+                     style="min-height: 165px; max-height: 165px;">
+    
+                <!-- Product Name -->
+                <p class="text-center fw-bold mt-2 text-dark" 
+                   style="font-family: monospace; font-size: 1em;">
+                    {{ product.product_name | upper }}
+                </p>
+            </a>
             </div>
         </div>
         {% endfor %}
     </div>
+    
     
     {% endif %}
 </div>

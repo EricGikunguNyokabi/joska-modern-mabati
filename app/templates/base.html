@@ -3,6 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Joska Modern Mabati {{ company_phone_1 }} - Quality roofing and gutter systems. Explore our products including Romax Matte and more." />
+
+    <meta property="og:title" content="Joska Modern Mabati - Roofing, Rain Gutter Systems & Other Products" />
+    <meta property="og:description" content="Shop here for premium roofing solutions and gutter systems from Joska Modern Mabati. Reliable and affordable quality products." />
+    <meta property="og:url" content="https://joskamodernmabati.com" />
+    <meta property="og:image" content="https://joskamodernmabati.com/static/images/logo.png" />
+
+    <!-- <meta name="csrf-token" content="{#{ csrf_token() }#}"> -->
+
+
+
     <title>{% block title %} {{ company_name }} {% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
@@ -11,6 +22,26 @@
     <!-- Add Font Awesome CDN -->
     <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+
+    
+
+    <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          "name": "Joska Modern Mabati",
+          "url": "https://joskamodernmabati.com",
+          "logo": "https://joskamodernmabati.com/logo.png",
+          "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+254757398722",
+            "contactType": "Customer Service"
+          }
+        }
+    </script>
+        
 
     
     <style>
@@ -69,7 +100,7 @@
             <div>
                 <span class="fa-li"><i class="fab fa-whatsapp"></i></span><p class="ms-auto"><a class="text-light" href="https://wa.me/254757398722?text=I%20Want%20to%20Order" target="_blank">
                 <!-- Whatsapp -->
-                <a type="button" class="btn btn-floating btn-sm rounded-5 me-0 " style="background-color: rgba(0,255,0,.5);" href="https://wa.me/254757398722?text=I%20Want%20to%20Order" target="_blank"><i class="fab fa-whatsapp"></i><i  class="ms-1 text-light">How can we help?</i></a>
+                <a type="button m-0 p-0" class="btn btn-floating btn-sm rounded-5 me-0 " style="background-color: rgba(0,255,0,.5);" href="https://wa.me/254757398722?text=I%20Want%20to%20Order" target="_blank"><i class="fab fa-whatsapp"></i><i  class="ms-1 text-light" style="font-size: 0.7em;">Need help?</i></a>
             </div>
         </div>
 
@@ -91,7 +122,7 @@
         </ul>
         <!-- Cart at the End -->
         <div class="ms-auto">
-            <a class="nav-link" href="{{ url_for('cart.cart') }}">
+            <a class="nav-link" href="{{ url_for('cart.cart_content') }}">
                 <i class="fas fa-shopping-cart"></i> Cart
             </a>
         </div>
@@ -106,7 +137,7 @@
         <div class="home-bg-img-1 d-flex flex-column justify-content-center align-items-center text-center text-white">
             <h1 class="fw-bold mb-3">Joska Modern Mabati</h1>
             <div>
-                <a href="" class="btn fw-bold text-light" style="background-color: rgba(128, 0, 128, .6); ">Shop here</a>
+                <a href="{{ url_for('ecommerce.all_products') }}" class="btn fw-bold text-light" style="background-color: rgba(128, 0, 128, .6); ">Shop here</a>
             </div>
         </div>
         
