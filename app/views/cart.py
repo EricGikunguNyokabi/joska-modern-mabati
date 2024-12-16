@@ -80,6 +80,51 @@ def clear_cart():
     return redirect(url_for('cart.cart_content'))
 
 
+
+# Route to display and place an order
+@cart.route("/place-order", methods=["GET", "POST"])
+def place_order():
+    cart_items = session.get("cart", [])
+    if not cart_items:
+        return redirect(url_for("cart.cart_content"))
+
+    total_price = sum(item["price"] * item["quantity"] for item in cart_items)
+
+    if request.method == "POST":
+        return redirect(url_for("cart.finalize_order"))
+
+    return render_template(
+        "product/cart/place_order.html", cart_items=cart_items, total_price=total_price
+    )
+
+
+# Route to finalize the order
+@cart.route("/finalize-order", methods=["GET","POST"])
+def finalize_order():
+    shipping_address = request.form.get("shipping_address")
+    contact_number = request.form.get("contact_number")
+    cart_items = session.get("cart", [])
+    total_price = sum(item["price"] * item["quantity"] for item in cart_items)
+
+    if not shipping_address or not contact_number:
+        return redirect(url_for("cart.place_order"))  # Redirect if missing details
+
+    order_details = {
+        "shipping_address": shipping_address,
+        "contact_number": contact_number,
+        "cart_items": cart_items,
+        "total_price": total_price,
+    }
+
+    session.pop("cart", None)
+    return render_template(
+        "product/cart/order_success.html", order_details=order_details
+    )
+
+
+
+
+
 # from flask import Blueprint, request, make_response, jsonify, render_template, session, redirect, url_for
 # from flask_session import Session
 # from app.models.product import Product, Category
@@ -181,9 +226,7 @@ def clear_cart():
 #     return redirect(url_for("cart.cart_content"))  # Redirect back to cart view
 
 
-@cart.route("/place-order", methods=["POST"])
-def place_order():
-    return redirect(url_for("cart.cart_content"))  # Redirect back to cart view
+
 
 
 

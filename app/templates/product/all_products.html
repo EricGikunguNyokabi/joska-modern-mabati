@@ -42,25 +42,60 @@
 <div class="row row-cols-2 row-cols-md-5 g-1 product-grid">
     {% for product in products %}
         <div class="col">
-            <!-- Product Wrapper -->
-            <div class="card border-1">
+            <div class="card border-1" style="padding: 5px;">
                 <a href="{{ url_for('ecommerce.single_product_detail', product_id=product.product_id) }}" 
-            style="text-decoration: none; color: inherit;">
-                <!-- Product Image -->
-                <img src="{{ url_for('static', filename=product.product_image_path) }}" 
-                    class="w-100" 
-                    alt="{{ product.product_name }}" 
-                    style="min-height: 165px; max-height: 165px;">
-                
-                <!-- Product Name -->
-                <h5 class="mt-2 text-center" 
-                    style="font-family: monospace; font-size: 0.9em; word-wrap: break-word; white-space: normal; font-weight: 800;">
-                    {{ product.product_name | upper }}
-                </h5>
+                   style="text-decoration: none; color: inherit;">
+                    <img src="{{ url_for('static', filename=product.product_image_path) }}" 
+                         class="w-100" 
+                         alt="{{ product.product_name }}" 
+                         style="min-height: 165px; max-height: 165px;">
                 </a>
+
+                <div class="d-flex justify-content-between align-items-center mt-2">
+                    <h5 class="m-0 text-center flex-grow-1" 
+                        style="font-family: monospace; font-size: 0.9em; font-weight: 800;">
+                        {{ product.product_name | upper }}
+                    </h5>
+
+                    <!-- Basket Icon Form -->
+                    <form class="add-to-cart-form" data-product-id="{{ product.product_id }}" 
+                          style="margin: 0; padding: 0;">
+                        <button type="submit" class="btn btn-sm p-1" 
+                                style="display: inline-flex; align-items: center; justify-content: center; background: none; border: none;">
+                            <i class="bi bi-cart-plus" style="font-size: 1.5em; color: rgba(128, 0, 128, 0.8);"></i>
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
-    {% endfor %}
+        {% endfor %}
 </div>
+
+<script>
+    document.querySelectorAll('.add-to-cart-form').forEach(form => {
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();  // Prevent the form from submitting normally
+
+            const productId = this.dataset.productId;
+
+            // Use fetch to send a POST request to the cart route
+            fetch("{{ url_for('cart.cart_content') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    product_id: productId  // Send the product_id as JSON
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Optionally update the UI, e.g., show a notification or update cart counter
+                console.log(data.message || "Product added to cart!");
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+</script>
 
 {% endblock %}

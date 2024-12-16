@@ -33,30 +33,25 @@
                         <p class="card-text"><span style="font-weight: 700; font-size: 0.7em;">Description :</span> {{ product.product_description }}</p>
                         <h4 class="py-1 text-info">KSh. {{ "{:,.2f}".format(product.product_cost) }}</h4>
 
-                        <!-- Form for Quantity and Add to Cart Button -->
-                        <form id="addToCartForm" method="POST" action="{{ url_for('ecommerce.home', product_id=product.product_id) }}">
-                            <div>
-                                <label for="">
-                                    <h5>Total Price: <span id="totalPrice">KSh. {{ "{:,.2f}".format(product.product_cost) }}</span></h5>
-                                    <input type="number" name="total_product_price" id="total_product_price" value="{{ product.product_cost }}" hidden>
-                                    <input type="hidden" name="unit_price" value="{{ product.product_cost }}">
-                                    <input type="hidden" name="product_name" value="{{ product.product_name }}">
-                                    <input type="hidden" name="image_src" value="{{ product.product_image_path }}">
-                                </label>
-                            </div>
+                        <form class="add-to-cart-form" data-product-id="{{ product.product_id }}" 
+                            style="margin: 0; padding: 0;">
+                        <button type="submit" class="btn btn-sm p-1" 
+                                style="display: inline-flex; align-items: center; justify-content: center; background: none; border: none;">
+                            <i class="bi bi-cart-plus" style="font-size: 1.5em; color: rgba(128, 0, 128, 0.8);"></i>
+                        </button>
+                    </form>
 
-                            <button type="submit" class="btn btn-primary form-control" id="addToCartBtn">Add to Cart</button>
-                        </form>
+                    
                     </div>
                 </div>
 
                 <div class="card-footer">
                     <div class="row">
                         <div class="col mt-0 d-flex justify-content-start">
-                            <a href="{{ url_for('ecommerce.all_products') }}" class="btn btn-small btn-primary">Back to Products</a>
+                            <a href="{{ url_for('ecommerce.all_products') }}" class="btn btn-sm btn-primary">Back to Products</a>
                         </div>
                         <div class="col mt-0 d-flex justify-content-end">
-                            <a href="{{ url_for('ecommerce.home') }}" class="btn btn-small btn-success">Go to My Cart</a>
+                            <a href="{{ url_for('cart.cart_content') }}" class="btn btn-sm btn-success">Go to My Cart</a>
                         </div>
                     </div>
                 </div>
@@ -70,4 +65,33 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.querySelectorAll('.add-to-cart-form').forEach(form => {
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();  // Prevent the form from submitting normally
+
+            const productId = this.dataset.productId;
+
+            // Use fetch to send a POST request to the cart route
+            fetch("{{ url_for('cart.cart_content') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    product_id: productId  // Send the product_id as JSON
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Optionally update the UI, e.g., show a notification or update cart counter
+                console.log(data.message || "Product added to cart!");
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    });
+</script>
+
+
 {% endblock %}
