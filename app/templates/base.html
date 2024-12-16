@@ -215,16 +215,16 @@
                 <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 48.8px;"></div><div class="form-notch-trailing"></div></div></div>
       
                 <ul class="fa-ul" style="margin-left: 1.65em;">
+
                   <li class="mb-3 text-light">
-                    <a href="{{ company_url }}">
-                        <span class="fa-li"><i class="fas fa-home"></i></span><p class="ms-auto">{{ company_name }}</p>
-                    </a>
+                    
+                        <span class="fa-li"><i class="fas fa-home"></i></span><p class="ms-auto"><a href="{{ company_url }}">{{ company_name }}</a></p>
                   </li>
                   <li class="mb-3">
-                    <span class="fa-li"><i class="fas fa-envelope"></i></span><p class="ms-auto"> {{ company_email_1  }}</p>
+                    <span class="fa-li"><i class="fas fa-envelope"></i></span><p class="ms-auto"><a class="text-light" href="mailto:{{ company_email_1  }}">{{ company_email_1  }}</a></p>
                   </li>
                   <li class="mb-3">
-                    <span class="fa-li"><i class="fas fa-phone"></i></span><p class="ms-auto"><a class="text-light" href="tel:{{ company_phone_1 }}">{{ company_phone_1 }}</a></p>
+                    <span class="fa-li"><i class="fas fa-phone"></i></span><p class="ms-auto"><a class="text-light" href="tel:{{ company_phone_2 }}">{{ company_phone_2 }}</a></p>
                   </li>
 
 

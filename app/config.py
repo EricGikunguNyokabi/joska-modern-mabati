@@ -2,8 +2,10 @@
 from decouple import config # type: ignore # load values from .env
 
 class Config:
-    SECRET_KEY = config("SECRET_KEY", default="fallback_secret_key")
+    SECRET_KEY = "9fdde50cf248cc178bac18fa6cb3e6de1510bcd207c5a4e3a1ec3d832eb44af0" 
     SQLALCHEMY_DATABASE_URI = config("DATABASE_URI", default="mysql+pymysql://root:@localhost/joskamodernmabati") 
+    # Database connection URI
+    # SQLALCHEMY_DATABASE_URI = "mysql+pymysql://joskrpni_autocrat:Autocrat#2250229202019@localhost/joskrpni_joskamodernmabati"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     UPLOAD_FOLDER = "app/static/images"
@@ -12,6 +14,21 @@ class Config:
 
     COMPANY_NAME = "JOSKA MODERN MABATI"
     COMPANY_PHONE_1 = "+254757398722"
-    COMPANY_PHONE_2 = ""
+    COMPANY_PHONE_2 = "+2540705152121"
     COMPANY_EMAIL_1 = "joskamodernmabati@gmail.com"
     COMPANY_URL = "https://joskamodernmabati.com/"
+
+
+    MAIL_SERVER = "smtp.gmail.com"
+    MAIL_PORT = 587
+    MAIL_USE_TLS = True
+    MAIL_USERNAME = "joskamodernmabati@gmail.com"
+    MAIL_PASSWORD = "czss aznv udwx pnpu"
+    MAIL_DEFAULT_SENDER = ("JOSKA MODERN MABATI", "joskamodernmabati@gmail.com")
+
+    # app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+    # app.config['MAIL_PORT'] = 587
+    # app.config['MAIL_USE_TLS'] = True
+    # app.config['MAIL_USERNAME'] = 'joskamodernmabati@gmail.com'
+    # app.config['MAIL_PASSWORD'] = 'czss aznv udwx pnpu'
+    # app.config['MAIL_DEFAULT_SENDER'] = ('JOSKA MODERN MABATI', 'joskamodernmabati@gmail.com')

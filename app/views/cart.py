@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, request, jsonify, session
 from app.models.product import Product
 from flask_login import login_required
+from flask_mail import Message
+from app import mail
 
 cart = Blueprint('cart', __name__)
 
@@ -98,17 +100,47 @@ def place_order():
     )
 
 
-# Route to finalize the order
-@cart.route("/finalize-order", methods=["GET","POST"])
+# # Route to finalize the order
+# @cart.route("/finalize-order", methods=["GET","POST"])
+# def finalize_order():
+#     shipping_address = request.form.get("shipping_address")
+#     contact_number = request.form.get("contact_number")
+#     cart_items = session.get("cart", [])
+#     total_price = sum(item["price"] * item["quantity"] for item in cart_items)
+
+#     if not shipping_address or not contact_number:
+#         return redirect(url_for("cart.place_order"))  # Redirect if missing details
+
+#     order_details = {
+#         "shipping_address": shipping_address,
+#         "contact_number": contact_number,
+#         "cart_items": cart_items,
+#         "total_price": total_price,
+#     }
+
+#     session.pop("cart", None)
+#     return render_template(
+#         "product/cart/order_success.html", order_details=order_details
+#     )
+
+
+
+from flask_mail import Message
+from app import mail
+
+@cart.route("/finalize-order", methods=["GET", "POST"])
 def finalize_order():
+    # Retrieve order details
     shipping_address = request.form.get("shipping_address")
     contact_number = request.form.get("contact_number")
     cart_items = session.get("cart", [])
     total_price = sum(item["price"] * item["quantity"] for item in cart_items)
 
+    # Redirect if missing required information
     if not shipping_address or not contact_number:
-        return redirect(url_for("cart.place_order"))  # Redirect if missing details
+        return redirect(url_for("cart.place_order"))
 
+    # Prepare order details
     order_details = {
         "shipping_address": shipping_address,
         "contact_number": contact_number,
@@ -116,7 +148,22 @@ def finalize_order():
         "total_price": total_price,
     }
 
+    # Clear the cart from the session
     session.pop("cart", None)
+
+    # Send order confirmation email
+    try:
+        msg = Message(
+            subject=f"Order Confirmation - {order_details['contact_number']}",
+            recipients=["nyokabigikungueric@gmail.com"],  # Test mail
+            # recipients=["joskamodernmabati@gmail.com"],  # Company email
+            html=render_template("product/cart/order_success.html", order_details=order_details),
+        )
+        mail.send(msg)
+    except Exception as e:
+        print(f"Failed to send email: {e}")  # Handle email failures gracefully
+
+    # Render the success template for the customer
     return render_template(
         "product/cart/order_success.html", order_details=order_details
     )

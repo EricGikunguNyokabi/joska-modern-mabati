@@ -5,6 +5,7 @@ from flask_migrate import Migrate # type: ignore
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 from flask_session import Session # pip install flask-session
+from flask_mail import Mail
 # from flask_wtf.csrf import CSRFProtect
 
 
@@ -16,6 +17,7 @@ db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
 bcrypt = Bcrypt()
+mail = Mail()
 
 def create_app():
     app = Flask(__name__)
@@ -32,7 +34,7 @@ def create_app():
     @app.context_processor
     def inject_company_name():
         return {'company_name': app.config['COMPANY_NAME'],
-                'company_email': app.config['COMPANY_EMAIL_1'],
+                'company_email_1': app.config['COMPANY_EMAIL_1'],
                 'company_phone_1': app.config['COMPANY_PHONE_1'],
                 'company_phone_2': app.config['COMPANY_PHONE_2'],
                 'company_url': app.config['COMPANY_URL']
@@ -44,6 +46,7 @@ def create_app():
     migrate.init_app(app, db)
     login_manager.init_app(app)
     bcrypt.init_app(app)
+    mail.init_app(app)
 
     # Set the login view for Flask-Login
     login_manager.login_view = "auth.login"  # Adjust this based on your blueprint

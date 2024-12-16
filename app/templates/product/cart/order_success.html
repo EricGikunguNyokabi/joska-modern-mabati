@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}Order Placed{% endblock %}
-{% block homecarousel %} {% endblock %}
+{% block homecarousel %}{% endblock %}
 {% block content %}
 <div class="container mt-5">
     <!-- Order Confirmation -->
@@ -17,10 +17,10 @@
         </div>
         <div class="card-body">
             <ul class="list-group mb-3">
-                {% for item in order_details.cart_items %}
+                {% for item in order_details["cart_items"] %}
                 <li class="list-group-item d-flex justify-content-between">
                     <div>
-                        <strong>{{ item.name }}</strong> 
+                        <strong>{{ item.name }}</strong>
                         <span class="text-muted">(x{{ item.quantity }})</span>
                     </div>
                     <span>KSh {{ "{:,.2f}".format(item.price * item.quantity) }}</span>
@@ -29,7 +29,7 @@
             </ul>
             <div class="d-flex justify-content-between mt-3">
                 <h5><strong>Total:</strong></h5>
-                <h5 style="color: green;"><strong>KSh {{ "{:,.2f}".format(order_details.total_price) }}</strong></h5>
+                <h5 style="color: green;"><strong>KSh {{ "{:,.2f}".format(order_details["total_price"]) }}</strong></h5>
             </div>
         </div>
     </div>
@@ -40,16 +40,20 @@
             <h4 class="mb-0">Shipping Information</h4>
         </div>
         <div class="card-body">
-            <p><strong>Shipping Address:</strong> {{ order_details.shipping_address }}</p>
-            <p><strong>Contact Number:</strong> {{ order_details.contact_number }}</p>
+            <p><strong>Shipping Address:</strong> {{ order_details["shipping_address"] }}</p>
+            <p><strong>Contact Number:</strong> {{ order_details["contact_number"] }}</p>
         </div>
     </div>
 
     <!-- Support Message and Return Link -->
     <div class="alert alert-info">
-        <p>Our customer support team will contact you shortly via <a href="tel:{{ company_phone_1 }}">{{ company_phone_1 }}</a> for more details about your order. Thank you for shopping with us!</p>
+        <p>
+            Our customer support team will contact you shortly via 
+            <b><a href="tel:{{ company_phone_1 }}">{{ company_phone_1 }}</a> or <a href="tel:{{ company_phone_1 }}">{{ company_phone_2 }}</a></b>
+             for more details about your order. Thank you for shopping with us!
+        </p>
     </div>
-    
+
     <div class="text-center">
         <a href="{{ url_for('ecommerce.home') }}" class="btn btn-primary">Return to Shop</a>
     </div>
