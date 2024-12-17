@@ -160,8 +160,8 @@
         {% block content %}{% endblock %}
     </main>
  
-
-<!-- <div class=" my-1" style="margin-top: 10vh;"> -->
+<!-- Main HTML content starts here -->
+<footer class="container-fluid text-white text-center text-lg-start">
     <style>
         body {
             display: flex;
@@ -171,76 +171,101 @@
         footer {
             margin-top: auto;
             width: 100%;
+            background-color: rgba(128, 0, 128, .6);
+        }
+
+        .footer-section {
+            padding-top: 20px;
+        }
+
+        .footer-title {
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .footer-btn {
+            padding: 12px 25px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2em;
+        }
+
+        .footer-btn:hover {
+            background-color: #0056b3;
+            text-decoration: none;
+        }
+
+        .map-container iframe {
+            width: 100%;
+            height: 250px;
+        }
+
+        .social-btns i {
+            font-size: 2em;
+            margin-right: 10px;
+        }
+
+        .social-btns a {
+            text-decoration: none;
         }
     </style>
-        <footer class="container-fluid text-white text-center text-lg-start">
-          <!-- Grid container -->
-          <div class="container-fluid px-5 py-1">
-            <!--Grid row-->
-            <div class="row mt-4">
-              <!--Grid column-->
-              <div class="col-lg-4 col-md-12 mb-2 mb-md-0">
-                <h5 class="text-uppercase mb-4" style="font-weight: 700;">Joska Modern Mabati Offers</h5>
-      
-                <p>
-                    We offer different mabati profiles including Roman tile, Box profile, Brick tile, Corrugated profile, Euro tile, Z-tile, Crimpled roofing, Roof water harvesting accessories and many more
-                </p>
-    <!--             
-                <h5><b>We also produce;</b></h5>
-                <p>
-                    Rolltops, Ridges, Valleys, Badge box, Side wall flashers, Stone coated accessories and many others.
-                </p> -->
-    
-      
-                <div class="mt-4">
-                    <!-- Facebook -->
-                    <a type="button" class="btn btn-floating btn-primary btn-lg" href="https://www.facebook.com" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                    <!-- Twitter -->
-                    <a type="button" class="btn btn-floating btn-dark btn-lg" href="https://www.twitter.com" target="_blank"><i class="fab fa-twitter"></i></a>
-                    <!-- Whatsapp -->
-                    <a type="button" class="btn btn-floating btn-success btn-lg" href="https://wa.me/254757398722?text=I%20Want%20to%20Order" target="_blank"><i class="fab fa-whatsapp"></i></a>
-                  </div>
-                  
-    
-              </div>
-              <!--Grid column-->
-      
-              <!--Grid column-->
-              <div class="col-lg-4 col-md-6 mb-2 mb-md-0">
-                <h5 class="text-uppercase mb-4 pb-1" style="font-weight: 700;">Contact Details</h5>
-      
-                <div class="form-outline form-white mb-4">
-                  <!-- <input type="text" id="formControlLg" class="form-control form-control-lg"> -->
-                  <!-- <label class="form-label" for="formControlLg" style="margin-left: 0px;">Search</label> -->
-                <div class="form-notch"><div class="form-notch-leading" style="width: 9px;"></div><div class="form-notch-middle" style="width: 48.8px;"></div><div class="form-notch-trailing"></div></div></div>
-      
+
+    <!-- Grid container -->
+    <div class="container-fluid px-5 py-5">
+        <!-- Grid row -->
+        <div class="row mt-4">
+            <!-- First column: Joska Modern Mabati Offers -->
+            <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                <h5 class="footer-title">Joska Modern Mabati Offers</h5>
+
+                <p>At Joska Modern Mabati, we provide high-quality roofing solutions that are durable, cost-effective, and crafted to stand the test of time. Explore our offerings:</p>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <h5><i class="bi bi-house-door"></i> Durable Roofing Materials</h5>
+                        <p>Our products are designed to resist harsh weather conditions and offer long-lasting protection for your home or business.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h5><i class="bi bi-cogs"></i> Custom Roofing Solutions</h5>
+                        <p>We offer tailored solutions to meet the unique requirements of residential and commercial projects.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h5><i class="bi bi-truck"></i> Fast & Reliable Delivery</h5>
+                        <p>Fast, reliable, and on-time delivery wherever you need our products to go.</p>
+                    </div>
+                </div>
+
+                <div class="mt-3 text-center">
+                    <a href="{{ url_for('ecommerce.all_products') }}" class="btn footer-btn">Explore Our Products</a>
+                </div>
+            </div>
+
+            <!-- Second column: Contact Details -->
+            <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
+                <h5 class="footer-title">Contact Details</h5>
+
                 <ul class="fa-ul" style="margin-left: 1.65em;">
-
-                  <li class="mb-3 text-light">
-                    
-                        <span class="fa-li"><i class="fas fa-home"></i></span><p class="ms-auto"><a href="{{ company_url }}">{{ company_name }}</a></p>
-                  </li>
-                  <li class="mb-3">
-                    <span class="fa-li"><i class="fas fa-envelope"></i></span><p class="ms-auto"><a class="text-light" href="mailto:{{ company_email_1  }}">{{ company_email_1  }}</a></p>
-                  </li>
-                  <li class="mb-3">
-                    <span class="fa-li"><i class="fas fa-phone"></i></span><p class="ms-auto"><a class="text-light" href="tel:{{ company_phone_2 }}">{{ company_phone_2 }}</a></p>
-                  </li>
-
-
-                  <li class="mb-3">
-                    <span class="fa-li"><i class="fab fa-whatsapp"></i></span><p class="ms-auto"><a class="text-light" href="https://wa.me/254757398722?text=I%20Want%20to%20Order" target="_blank"> {{ company_phone_1 }} </a></p>
-                  </li>
+                    <li class="mb-3">
+                        <span class="fa-li"><i class="fas fa-envelope"></i></span><p class="ms-auto"><a class="text-light" href="mailto:{{ company_email_1  }}">{{ company_email_1  }}</a></p>
+                    </li>
+                    <li class="mb-3">
+                        <span class="fa-li"><i class="fas fa-phone"></i></span><p class="ms-auto"><a class="text-light" href="tel:{{ company_phone_2 }}">{{ company_phone_2 }}</a></p>
+                    </li>
+                    <li class="mb-3">
+                        <span class="fa-li"><i class="fab fa-whatsapp"></i></span><p class="ms-auto"><a class="text-light" href="https://wa.me/254757398722?text=I%20Want%20to%20Order" target="_blank"> {{ company_phone_1 }} </a></p>
+                    </li>
                 </ul>
-              </div>
-              <!--Grid column-->
-      
-              <!--Grid column-->
-              <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
-                <h5 class="text-uppercase mb-4" style="font-weight: 700;">Location</h5>
-      
+            </div>
+
+            <!-- Third column: Location -->
+            <div class="col-lg-4 col-md-8 mb-4 mb-md-0">
+                <h5 class="footer-title">Location</h5>
+
                 <!-- Embedded Google Map -->
-                <div class="map-container mt-3">
+                <div class="map-container">
                     <iframe 
                         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3996.7092711012066!2d36.891504975018634!3d-1.3258730359878646!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x183fbb545a2b9b89%3A0x3c98a67f212df5a8!2sCabanas%2C%20Mombasa%20Road%2C%20Nairobi!5e0!3m2!1sen!2ske!4v1694945932201!5m2!1sen!2ske" 
                         width="100%" 
@@ -251,35 +276,25 @@
                         referrerpolicy="no-referrer-when-downgrade">
                     </iframe>
                 </div>
-              </div>
-              <!--Grid column-->
             </div>
-            <!--Grid row-->
-          </div>
-          <!-- Grid container -->
-      
-          <!-- Copyright -->
-          <div class="row">
+        </div>
+
+        <!-- Social and Copyright Section -->
+        <div class="mt-5 row justify-content-center social-btns">
+            <a class="btn btn-floating btn-success btn-lg" href="https://wa.me/254757398722?text=I%20Want%20to%20Order" target="_blank"><i class="fab fa-whatsapp"></i></a>
+        </div>
+
+        <!-- Copyright -->
+        <div class="row mt-4">
             <div class="col">
-                <div class="row">
-                    <div class="col">
-                        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
-                            Copyright &copy; {{ company_name }}
-                        </div>
-                    </div>
+                <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+                    &copy; {{ company_name }} - All rights reserved
                 </div>
-                <!-- <div class="row justify-content-center">
-                    <div class="col">
-                        Built by V-TECHNOLOGIES
-                    </div>
-                </div> -->
             </div>
-          </div>
-          <!-- Copyright -->
-        </footer>
-        
-      <!-- </div> -->
-      <!-- End of .container -->
+        </div>
+    </div>
+</footer>
+
 
     <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}">

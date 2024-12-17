@@ -15,7 +15,8 @@ class Config:
     COMPANY_NAME = "JOSKA MODERN MABATI"
     COMPANY_PHONE_1 = "+254757398722"
     COMPANY_PHONE_2 = "+2540705152121"
-    COMPANY_EMAIL_1 = "joskamodernmabati@gmail.com"
+    COMPANY_EMAIL_1 = "joskamabati@gmail.com"
+    COMPANY_EMAIL_2 = "joskamodernmabati@gmail.com"
     COMPANY_URL = "https://joskamodernmabati.com/"
 
     # EMAIL SETUP

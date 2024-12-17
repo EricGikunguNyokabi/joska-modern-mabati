@@ -193,7 +193,7 @@ def finalize_order():
         try:
             msg = Message(
                 subject=f"Order Confirmation - #{order.order_id}",
-                recipients=["nyokabigikungueric@gmail.com", "nyokabigeric@gmail.com"],  # Emails for confirmation
+                recipients=["joskamabati@gmail.com", "nyokabigeric@gmail.com", "joskamodernmabati@gmail.com"],  # Emails for confirmation
                 html=render_template("product/cart/order_success.html", order_details=order_details),
             )
             mail.send(msg)

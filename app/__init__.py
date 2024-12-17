@@ -38,6 +38,7 @@ def create_app():
         return {
             'company_name': app.config['COMPANY_NAME'],
             'company_email_1': app.config['COMPANY_EMAIL_1'],
+            'company_email_2': app.config['COMPANY_EMAIL_2'],
             'company_phone_1': app.config['COMPANY_PHONE_1'],
             'company_phone_2': app.config['COMPANY_PHONE_2'],
             'company_url': app.config['COMPANY_URL']
