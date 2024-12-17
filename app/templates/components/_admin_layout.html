@@ -17,19 +17,19 @@
                     </li>
                     <!-- Manage Orders Link -->
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="{{ url_for('admin.manage_orders') }}">
                             <i class="bi bi-cart"></i> Manage Orders
                         </a>
                     </li>
                     <!-- Manage Users Link -->
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="{{ url_for('admin.manage_users') }}">
                             <i class="bi bi-person"></i> Manage Users
                         </a>
                     </li>
                     <!-- Manage Privileges Link -->
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="{{ url_for('admin.manage_privileges') }}">
                             <i class="bi bi-shield-lock"></i> Manage Privileges
                         </a>
                     </li>

@@ -8,9 +8,9 @@
 
 {% block content %}
     {% include 'components/_admin_layout.html' %}
-    <!-- Dynamic Content for specific actions like editing products or managing orders -->
+
     {% block admin_dashboard_content %}
-        <div class="card">
+        <div class="card" style="font-family: monospace;">
             <div class="card-body">
                 <h5 class="card-title">Quick Stats</h5>
                 <p class="card-text">
@@ -20,11 +20,38 @@
                 </p>
                 <hr>
                 <h5>Recent Activity</h5>
-                <ul>
-                    <li>Order #12345 placed by John Doe</li>
-                    <li>Product 'Metal Sheets' updated</li>
-                    <li>New User 'Jane Smith' registered</li>
-                </ul>
+
+                <!-- Recent Orders -->
+                <table class="table table-bordered table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col" colspan="5">Recent Orders</th>
+                        </tr>
+                        <tr>
+                            <th scope="col">Order ID</th>
+                            <th scope="col">Date and Time</th>
+                            <th scope="col">Total Amount (KES)</th>
+                            <th scope="col">Customer</th>
+                            <th scope="col">Shipping Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in recent_orders %}
+                            <tr>
+                                <td>{{ order.order_id }}</td>
+                                <td>{{ order.order_date.strftime("%Y-%m-%d %H:%M:%S") if order.order_date else "N/A" }}</td>
+                                <td>{{ "{:,.2f}".format(order.total_price|default(0)) }}</td>
+                                <td>{{ order.contact_number|default("Unknown") }}</td>
+                                <td>{{ order.shipping_address|default("Unknown") }}</td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center">No recent orders available.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                
             </div>
         </div>
     {% endblock %}

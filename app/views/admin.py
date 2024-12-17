@@ -2,21 +2,39 @@ import os
 from flask import Blueprint, render_template, request, flash, current_app, redirect, url_for
 from werkzeug.utils import secure_filename
 from app.models.product import Product, Category  # Ensure you have a Product model defined
+from app.models.user import User
+from app.models.order import Order, OrderItem
 from app import db
+import os
+from datetime import datetime
 
 admin = Blueprint("admin",__name__)
+
+
 
 # Route for Admin Dashboard
 @admin.route("/adm/dash")
 def admin_dashboard():
-    # Example data, replace with real data fetch logic from your models
+    # Quick stats
     total_products = Product.query.count()
-    total_orders = Product.query.count()
-    total_users = Product.query.count()
-    return render_template("admin/dashboard.html", 
-                           total_products=total_products, 
-                           total_orders=total_orders, 
-                           total_users=total_users)
+    total_orders = Order.query.count()
+    total_users = User.query.count()
+
+    # Fetch recent activities: latest 5 orders, products, and users
+    recent_orders = Order.query.order_by(Order.order_date.desc()).limit(5).all()
+    recent_products = Product.query.order_by(Product.created_at.desc()).limit(5).all()
+    recent_users = User.query.order_by(User.created_at.desc()).limit(5).all()
+
+    return render_template(
+        "admin/dashboard.html",
+        total_products=total_products,
+        total_orders=total_orders,
+        total_users=total_users,
+        recent_orders=recent_orders,
+        recent_products=recent_products,
+        recent_users=recent_users
+    )
+
 
 # EDIT PRODUCTS
 @admin.route("/adm/products/edit-products")
@@ -73,9 +91,53 @@ def edit_product(product_id):
     return render_template("admin/edit_product_form.html", product=product, categories=categories)
 
 
-@admin.route("/adm/dash/manage-orders")
+
+
+@admin.route("/adm/dash/manage-orders", methods=["GET", "POST"])
 def manage_orders():
-    pass
+    # Fetch all orders
+    orders = Order.query.order_by(Order.order_date.desc()).all()
+
+    if request.method == "POST":
+        # Handle updates for an order status
+        order_id = request.form.get("order_id")
+        action = request.form.get("action")  # Expected values: seen, sorted, delete
+
+        try:
+            order = Order.query.get(order_id)
+            if not order:
+                flash(f"Order #{order_id} not found.", "danger")
+                return redirect(url_for("admin.manage_orders"))
+
+            if action == "seen":
+                order.status = "Seen"
+                order.updated_at = datetime.now()
+                db.session.commit()
+                flash(f"Order #{order_id} marked as 'Seen'.", "success")
+
+            elif action == "delivered":
+                order.status = "Delivered"
+                order.updated_at = datetime.now()
+                db.session.commit()
+                flash(f"Order #{order_id} marked as 'Delivered'.", "success")
+
+            elif action == "delete":
+                db.session.delete(order)
+                db.session.commit()
+                flash(f"Order #{order_id} has been deleted.", "danger")
+
+            else:
+                flash("Invalid action.", "warning")
+
+        except Exception as e:
+            db.session.rollback()
+            flash(f"An error occurred: {str(e)}", "danger")
+
+        return redirect(url_for("admin.manage_orders"))
+
+    return render_template("admin/manage_orders.html", orders=orders)
+
+
 
 @admin.route("/adm/dash/manage-users")
 def manage_users():
@@ -86,9 +148,6 @@ def manage_privileges():
     pass
 
 
-from flask import request, render_template, flash, redirect, url_for
-from werkzeug.utils import secure_filename
-import os
 
 # CATEGORY ROUTES
 

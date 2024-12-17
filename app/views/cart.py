@@ -1,13 +1,17 @@
-from flask import Blueprint, render_template, redirect, url_for, request, jsonify, session
+from flask import Blueprint, render_template, redirect, url_for, request, jsonify, session,flash
+
+# models
 from app.models.product import Product
+from app.models.order import Order, OrderItem
+# 
 from flask_login import login_required
 from flask_mail import Message
-from app import mail
+from app import db, mail
 from twilio.rest import Client
 from flask import current_app
 
 
-cart = Blueprint('cart', __name__)
+cart = Blueprint("cart", __name__)
 
 # View for showing the cart contents
 @cart.route("/cart", methods=["GET", "POST"])
@@ -139,9 +143,6 @@ def send_whatsapp_message(order_details, recipient):
 
 
 
-
-
-
 @cart.route("/finalize-order", methods=["GET", "POST"])
 def finalize_order():
     # Retrieve order details
@@ -150,51 +151,128 @@ def finalize_order():
     cart_items = session.get("cart", [])
     total_price = sum(item["price"] * item["quantity"] for item in cart_items)
 
-    # Redirect if missing required information
+    # Redirect if essential details are missing
     if not shipping_address or not contact_number:
+        flash("Missing required fields! Shipping address and contact number are mandatory.", "danger")
         return redirect(url_for("cart.place_order"))
 
-    # Prepare order details
-    order_details = {
-        "shipping_address": shipping_address,
-        "contact_number": contact_number,
-        "cart_items": cart_items,
-        "total_price": total_price,
-    }
-
-    # Clear the cart from the session
-    session.pop("cart", None)
-
-    # Send order confirmation email
     try:
-        msg = Message(
-            subject=f"Order Placed by - {order_details['contact_number']}",
-            recipients=[
-            # "joskamodernmabati@gmail.com",   # Company email
-            # "josekaush@gmail.com",
-            "nyokabigikungueric@gmail.com",
-            "nyokabigeric@gmail.com"  # Test email
-        ],
-            # recipients=["joskamodernmabati@gmail.com"],  # Company email
-            html=render_template("product/cart/order_success.html", order_details=order_details),
+        # Step 1: Save the main order record to the database
+        order = Order(
+            shipping_address=shipping_address,
+            contact_number=contact_number,
+            total_price=total_price
         )
-        mail.send(msg)
+        db.session.add(order)
+        db.session.flush()  # Allows fetching 'order_id' without committing yet
+
+        # Step 2: Save all cart items (order items) to the database
+        for item in cart_items:
+            order_item = OrderItem(
+                order_id=order.order_id,
+                product_id=item["product_id"],  # Corrected key
+                product_name=item["name"],
+                quantity=item["quantity"],
+                price=item["price"],
+            )
+            db.session.add(order_item)
+
+        # Step 3: Commit all database changes
+        db.session.commit()
+
+        # Step 4: Prepare order confirmation details
+        order_details = {
+            "order_id": order.order_id,
+            "shipping_address": shipping_address,
+            "contact_number": contact_number,
+            "cart_items": cart_items,
+            "total_price": total_price,
+        }
+
+        # Step 5: Send confirmation email
+        try:
+            msg = Message(
+                subject=f"Order Confirmation - #{order.order_id}",
+                recipients=["nyokabigikungueric@gmail.com", "nyokabigeric@gmail.com"],  # Emails for confirmation
+                html=render_template("product/cart/order_success.html", order_details=order_details),
+            )
+            mail.send(msg)
+        except Exception as e:
+            print(f"Failed to send email: {e}")  # Email failure shouldn't break order finalization
+
+        # Step 6: Send WhatsApp order confirmation (if configured)
+        try:
+            recipient = "+254701838170"  # Update dynamically if needed
+            send_whatsapp_message(order_details, recipient)
+        except Exception as e:
+            print(f"Failed to send WhatsApp message: {e}")  # Log for debugging
+
+        # Step 7: Clear cart session after successful order
+        session.pop("cart", None)
+
+        # Step 8: Display success page with order details
+        return render_template("product/cart/order_success.html", order_details=order_details)
+
     except Exception as e:
-        print(f"Failed to send email: {e}")  # Handle email failures gracefully
+        db.session.rollback()  # Rollback in case of errors
+        print(f"Error finalizing order: {e}")
+        flash("An error occurred while finalizing the order. Please try again.", "danger")
+        return redirect(url_for("cart.place_order"))
 
-    # Send WhatsApp
-    try:
-        recipient = "+254701838170"  # Replace this with dynamic contact_number if customer is notified
-        send_whatsapp_message(order_details, recipient)
-    except Exception as e:
-        print(f"Failed to send WhatsApp message: {e}")
 
-    session.pop("cart", None)
+# @cart.route("/finalize-order", methods=["GET", "POST"])
+# def finalize_order():
+#     # Retrieve order details
+#     shipping_address = request.form.get("shipping_address")
+#     contact_number = request.form.get("contact_number")
+#     cart_items = session.get("cart", [])
+#     total_price = sum(item["price"] * item["quantity"] for item in cart_items)
 
-    # Render the success template for the customer
-    return render_template(
-        "product/cart/order_success.html", order_details=order_details
-    )
+#     # Redirect if missing required information
+#     if not shipping_address or not contact_number:
+#         return redirect(url_for("cart.place_order"))
+
+#     # Prepare order details
+#     order_details = {
+#         "shipping_address": shipping_address,
+#         "contact_number": contact_number,
+#         "cart_items": cart_items,
+#         "total_price": total_price,
+#     }
+
+#     # Clear the cart from the session
+#     session.pop("cart", None)
+
+#     # Send order confirmation email
+#     try:
+#         msg = Message(
+#             subject=f"Order Placed by - {order_details['contact_number']}",
+#             recipients=[
+#             # "joskamodernmabati@gmail.com",   # Company email
+#             # "josekaush@gmail.com",
+#             "nyokabigikungueric@gmail.com",
+#             "nyokabigeric@gmail.com"  # Test email
+#         ],
+#             # recipients=["joskamodernmabati@gmail.com"],  # Company email
+#             html=render_template("product/cart/order_success.html", order_details=order_details),
+#         )
+#         mail.send(msg)
+#     except Exception as e:
+#         print(f"Failed to send email: {e}")  # Handle email failures gracefully
+
+#     # Send WhatsApp
+#     try:
+#         recipient = "+254701838170"  # Replace this with dynamic contact_number if customer is notified
+#         send_whatsapp_message(order_details, recipient)
+#     except Exception as e:
+#         print(f"Failed to send WhatsApp message: {e}")
+
+#     session.pop("cart", None)
+
+#     # Render the success template for the customer
+#     return render_template(
+#         "product/cart/order_success.html", order_details=order_details
+#     )
 
 from flask import current_app
 
