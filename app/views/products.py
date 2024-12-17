@@ -15,7 +15,7 @@ def home():
 @ecommerce.route("/products")
 def all_products():
     categories = Category.query.all() 
-    products = Product.query.all()  # Fetch all products from the database
+    products = Product.query.all() 
     return render_template('product/all_products.html',categories=categories, products=products)
 
 @ecommerce.route("/product/add-product", methods=["POST", "GET"])
@@ -86,49 +86,7 @@ def single_product_detail(product_id):
     return render_template('product/single_product.html', product=product)
 
 
-from flask import request, render_template, flash, redirect, url_for
-from werkzeug.utils import secure_filename
-import os
 
-# CATEGORY ROUTES
-
-@ecommerce.route("/category/add-category", methods=["POST", "GET"])
-def add_category_details():
-    if request.method == "POST":
-        try:
-            # Retrieve form data
-            category_name = request.form.get("category_name")
-            category_image = request.files.get("category_image_path")
-
-            # Validate required fields
-            if not all([category_name, category_image]):
-                flash("All fields are required, including an image!", "danger")
-                return render_template("admin/add_category.html")
-
-            # Secure file upload
-            image_filename = secure_filename(category_image.filename)
-            upload_folder = current_app.config["CATEGORY_UPLOAD_FOLDER"]
-            os.makedirs(upload_folder, exist_ok=True)
-            image_path = os.path.join(upload_folder, image_filename)
-            category_image.save(image_path)
-
-            # Save category to the database using SQLAlchemy
-            new_category = Category(
-                category_name=category_name,
-                category_image_path=f"images/category/{image_filename}"  # Relative path for the database
-            )
-            db.session.add(new_category)
-            db.session.commit()
-
-            flash(f"Category '{category_name}' added successfully!", "success")
-            return redirect(url_for('ecommerce.add_category_details'))  # Redirect after successful submission
-
-        except Exception as e:
-            db.session.rollback()
-            flash(f"An error occurred: {str(e)}", "danger")
-            return render_template("admin/add_category.html")
-
-    return render_template("admin/add_category.html")
 
 
 # @ecommerce.route("/products/category/<int:category_id>")
@@ -142,6 +100,7 @@ def add_category_details():
 def category_products(category_id):
     # Query category details
     category = Category.query.filter_by(category_id=category_id).first_or_404()
+    categories = Category.query.all() 
     
     # Query products associated with this category
     products = Product.query.filter_by(product_category_id=category_id).all()
@@ -149,7 +108,10 @@ def category_products(category_id):
     return render_template(
         "product/category_products.html",
         category=category,
-        products=products
+        products=products, 
+        categories=categories
     )
+
+
 
 

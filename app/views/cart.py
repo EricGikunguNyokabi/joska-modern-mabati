@@ -3,6 +3,9 @@ from app.models.product import Product
 from flask_login import login_required
 from flask_mail import Message
 from app import mail
+from twilio.rest import Client
+from flask import current_app
+
 
 cart = Blueprint('cart', __name__)
 
@@ -100,33 +103,44 @@ def place_order():
     )
 
 
-# # Route to finalize the order
-# @cart.route("/finalize-order", methods=["GET","POST"])
-# def finalize_order():
-#     shipping_address = request.form.get("shipping_address")
-#     contact_number = request.form.get("contact_number")
-#     cart_items = session.get("cart", [])
-#     total_price = sum(item["price"] * item["quantity"] for item in cart_items)
-
-#     if not shipping_address or not contact_number:
-#         return redirect(url_for("cart.place_order"))  # Redirect if missing details
-
-#     order_details = {
-#         "shipping_address": shipping_address,
-#         "contact_number": contact_number,
-#         "cart_items": cart_items,
-#         "total_price": total_price,
-#     }
-
-#     session.pop("cart", None)
-#     return render_template(
-#         "product/cart/order_success.html", order_details=order_details
-#     )
 
 
 
-from flask_mail import Message
-from app import mail
+def send_whatsapp_message(order_details, recipient):
+    client = Client(current_app.config["TWILIO_ACCOUNT_SID"], current_app.config["TWILIO_AUTH_TOKEN"])
+
+    # Generate message body
+    items_list = "\n".join(
+        [f"- {item['name']} x{item['quantity']} @ KSh {item['price']:,}" for item in order_details['cart_items']]
+    )
+
+    message_body = (
+        f"*Thank you for your order from {current_app.config['COMPANY_NAME']}!*\n\n"
+        f"_Shipping Address:_ {order_details['shipping_address']}\n"
+        f"_Contact Number:_ {order_details['contact_number']}\n\n"
+        f"*Order Items:*\n{items_list}\n\n"
+        f"*Total Price:* KSh {order_details['total_price']:,}\n\n"
+        f"For support, contact us at: {current_app.config['COMPANY_PHONE_1']} or {current_app.config['COMPANY_EMAIL_1']}"
+    )
+
+    # Print the message body to check
+    print("Sending WhatsApp message:\n", message_body)
+
+    # Send WhatsApp message
+    try:
+        message = client.messages.create(
+            body=message_body,
+            from_=current_app.config["TWILIO_WHATSAPP_NUMBER"],
+            to=f"whatsapp:{recipient}",
+        )
+        print("WhatsApp message sent successfully!", message.sid)  # Log the success message
+    except Exception as e:
+        print(f"Failed to send WhatsApp message: {e}")
+
+
+
+
+
 
 @cart.route("/finalize-order", methods=["GET", "POST"])
 def finalize_order():
@@ -154,8 +168,13 @@ def finalize_order():
     # Send order confirmation email
     try:
         msg = Message(
-            subject=f"Order Confirmation - {order_details['contact_number']}",
-            recipients=["nyokabigikungueric@gmail.com"],  # Test mail
+            subject=f"Order Placed by - {order_details['contact_number']}",
+            recipients=[
+            # "joskamodernmabati@gmail.com",   # Company email
+            # "josekaush@gmail.com",
+            "nyokabigikungueric@gmail.com",
+            "nyokabigeric@gmail.com"  # Test email
+        ],
             # recipients=["joskamodernmabati@gmail.com"],  # Company email
             html=render_template("product/cart/order_success.html", order_details=order_details),
         )
@@ -163,202 +182,35 @@ def finalize_order():
     except Exception as e:
         print(f"Failed to send email: {e}")  # Handle email failures gracefully
 
+    # Send WhatsApp
+    try:
+        recipient = "+254701838170"  # Replace this with dynamic contact_number if customer is notified
+        send_whatsapp_message(order_details, recipient)
+    except Exception as e:
+        print(f"Failed to send WhatsApp message: {e}")
+
+    session.pop("cart", None)
+
     # Render the success template for the customer
     return render_template(
         "product/cart/order_success.html", order_details=order_details
     )
 
+from flask import current_app
 
+@cart.route('/send-whatsapp')
+def send_whatsapp():
+    # Phone number you want to send to (must be in WhatsApp format)
+    to_phone_number = "whatsapp:+254701838170"  # Ensure this number is verified
 
+    try:
+        # Send the WhatsApp message using the Twilio client
+        message = current_app.twilio_client.messages.create(
+            body="Hello from Flask + Twilio!",  # The message body
+            from_=current_app.config['TWILIO_WHATSAPP_NUMBER'],  # Your Twilio WhatsApp number
+            to=to_phone_number  # Recipient's phone number
+        )
+        return f"Message sent successfully! Message SID: {message.sid}"
 
-
-# from flask import Blueprint, request, make_response, jsonify, render_template, session, redirect, url_for
-# from flask_session import Session
-# from app.models.product import Product, Category
-# from flask_login import login_required
-# import json
-
-# cart = Blueprint("cart", __name__)
-
-
-# @cart.route("/cart", methods=["GET", "POST"])
-# def cart_content():
-#     # Ensure cart exists in the session
-#     if "cart" not in session:
-#         session["cart"] = []  # Initialize as an empty list
-
-#     # Handle POST request to add a product to the cart
-#     if request.method == "POST":
-#         # Check for JSON data (for AJAX)
-#         if request.is_json:
-#             data = request.get_json()
-#             action = data.get("action")
-#             product_id = data.get("product_id")
-#             if action == "increase":
-#                 # Increase the quantity of the product in the cart
-#                 for item in session["cart"]:
-#                     if item["product_id"] == product_id:
-#                         item["quantity"] += 1
-#                         break
-#             elif action == "decrease":
-#                 # Decrease the quantity of the product in the cart, but prevent negative quantity
-#                 for item in session["cart"]:
-#                     if item["product_id"] == product_id and item["quantity"] > 1:
-#                         item["quantity"] -= 1
-#                         break
-#             elif action == "cancel":
-#                 # Remove the product from the cart completely
-#                 session["cart"] = [item for item in session["cart"] if item["product_id"] != product_id]
-
-#             session.modified = True  # Mark session as modified
-#             return jsonify({"cart": session["cart"]}), 200
-
-#     # Handle GET request to view the cart
-#     cart_items = session.get("cart", [])
-    
-#     # Calculate total price for the cart
-#     total_price = sum(item["price"] * item["quantity"] for item in cart_items)
-    
-#     item = products = Product.query.all()
-#     return render_template("product/cart/cart.html", cart_items=cart_items, item=item, total_price=total_price)
-
-
-
-
-
-
-# @cart.route('/cart/update/<action>/<product_id>', methods=['POST'])
-# def update_quantity(action, product_id):
-#     if 'cart' not in session:
-#         session['cart'] = []
-    
-#     product = Product.query.filter_by(product_id=product_id).first()
-#     if not product:
-#         return jsonify({'message': 'Product not found!'}), 404
-    
-#     # Find product in the cart session
-#     cart_item = next((item for item in session['cart'] if item['product_id'] == product.product_id), None)
-    
-#     if cart_item:
-#         if action == 'increment':
-#             cart_item['quantity'] += 1
-#         elif action == 'decrement' and cart_item['quantity'] > 1:
-#             cart_item['quantity'] -= 1
-#         session.modified = True  # Mark the session as modified to reflect the changes
-    
-#     return redirect(url_for('cart.cart_content'))
-
-
-
-
-
-# # Remove single item 
-# @cart.route('/cart/remove/<product_id>', methods=['POST'])
-# def remove_item(product_id):
-#     if 'cart' not in session:
-#         session['cart'] = []
-
-#     # Remove item from cart
-#     session['cart'] = [item for item in session['cart'] if item['product_id'] != product_id]
-#     session.modified = True  # Mark session as modified
-#     return redirect(url_for('cart.cart_content'))
-
-
-
-# @cart.route("/clear", methods=["POST"])
-# def clear_cart():
-#     """Clear all items from the shopping cart."""
-#     session["cart"] = []  # Empty the cart
-#     session.modified = True  # Mark the session as modified
-#     return redirect(url_for("cart.cart_content"))  # Redirect back to cart view
-
-
-
-
-
-
-
-
-
-# # @cart.route('/add_to_cart', methods=['POST'])
-# # def add_to_cart():
-# #     """Add an item to the shopping cart."""
-# #     product_id = request.json.get('product_id')
-# #     quantity = request.json.get('quantity', 1)
-
-# #     if not product_id:
-# #         return jsonify({"error": "Product ID is required"}), 400
-
-# #     # Get the current cart from cookies
-# #     cart = request.cookies.get('cart')
-# #     if cart:
-# #         cart = json.loads(cart)
-# #     else:
-# #         cart = {}
-
-# #     # Update the cart
-# #     if product_id in cart:
-# #         cart[product_id] += quantity
-# #     else:
-# #         cart[product_id] = quantity
-
-# #     # Save the updated cart back to cookies
-# #     response = make_response(jsonify({"message": "Item added to cart"}))
-# #     response.set_cookie('cart', json.dumps(cart), httponly=True)  # Set cookie with httponly for security
-# #     return response
-
-# # @cart.route('/update_cart', methods=['POST'])
-# # def update_cart():
-# #     """Update the quantity of an item in the shopping cart."""
-# #     product_id = request.json.get('product_id')
-# #     quantity = request.json.get('quantity')
-
-# #     if not product_id or quantity is None:
-# #         return jsonify({"error": "Product ID and quantity are required"}), 400
-
-# #     # Get the current cart from cookies
-# #     cart = request.cookies.get('cart')
-# #     if cart:
-# #         cart = json.loads(cart)
-# #     else:
-# #         cart = {}
-
-# #     # Update the cart
-# #     if product_id in cart:
-# #         if quantity <= 0:
-# #             del cart[product_id]  # Remove item if quantity is zero or less
-# #         else:
-# #             cart[product_id] = quantity  # Update quantity
-# #     else:
-# #         return jsonify({"error": "Product not found in cart"}), 404
-
-# #     # Save the updated cart back to cookies
-# #     response = make_response(jsonify({"message": "Cart updated"}))
-# #     response.set_cookie('cart', json.dumps(cart), httponly=True)
-# #     return response
-
-# # @cart.route('/remove_from_cart', methods=['POST'])
-# # def remove_from_cart():
-# #     """Remove an item from the shopping cart."""
-# #     product_id = request.json.get('product_id')
-
-# #     if not product_id:
-# #         return jsonify({"error": "Product ID is required"}), 400
-
-# #     # Get the current cart from cookies
-# #     cart = request.cookies.get('cart')
-# #     if cart:
-# #         cart = json.loads(cart)
-# #     else:
-# #         cart = {}
-
-# #     # Remove the item from the cart
-# #     if product_id in cart:
-# #         del cart[product_id]
-# #     else:
-# #         return jsonify({"error": "Product not found in cart"}), 404
-
-# #     # Save the updated cart back to cookies
-# #     response = make_response(jsonify({"message": "Item removed from cart"}))
-# #     response.set_cookie('cart', json.dumps(cart), httponly=True)
-# #     return response
+    except Exception as e:
+        return f"Failed to send message. Error: {str(e)}"

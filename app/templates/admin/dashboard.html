@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - {{ company_name }}{% endblock %}
+
+{% block homecarousel %}
+<!-- Optionally, add a carousel here if needed -->
+{% endblock %}
+
+{% block content %}
+    {% include 'components/_admin_layout.html' %}
+    <!-- Dynamic Content for specific actions like editing products or managing orders -->
+    {% block admin_dashboard_content %}
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Quick Stats</h5>
+                <p class="card-text">
+                    <strong>Total Products:</strong> {{ total_products }} <br>
+                    <strong>Total Orders:</strong> {{ total_orders }} <br>
+                    <strong>Total Users:</strong> {{ total_users }} <br>
+                </p>
+                <hr>
+                <h5>Recent Activity</h5>
+                <ul>
+                    <li>Order #12345 placed by John Doe</li>
+                    <li>Product 'Metal Sheets' updated</li>
+                    <li>New User 'Jane Smith' registered</li>
+                </ul>
+            </div>
+        </div>
+    {% endblock %}
+{% endblock %}

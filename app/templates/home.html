@@ -88,11 +88,22 @@
                          style="min-height: 165px; max-height: 165px;">
                 </a>
 
-                <div class="d-flex justify-content-between align-items-center mt-2">
+                <div class="align-items-center mt-0">
                     <h5 class="m-0 text-center flex-grow-1" 
                         style="font-family: monospace; font-size: 0.9em; font-weight: 800;">
                         {{ product.product_name | upper }}
-                    </h5>
+                </h5>
+                </div>
+                
+
+                <div class="d-flex justify-content-between align-items-center mt-0">
+                    
+                    <!-- Product Cost -->
+                    <h5 class="m-0 text-center flex-grow-1" 
+                        style="font-family: monospace; font-size: 0.7em; font-weight: 300; color: rgba(0,0,0,.7);">
+                        Ksh {{ "{:,.0f}".format(product.product_cost) }}
+                        </h5>
+                    
 
                     <!-- Basket Icon Form -->
                     <form class="add-to-cart-form" data-product-id="{{ product.product_id }}" 

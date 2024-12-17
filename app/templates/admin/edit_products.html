@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Products - {{ company_name }} {% endblock %}
+
+{% block homecarousel %} {% endblock %}
+
+{% block content %}
+
+{% include 'components/_admin_layout.html' %}
+    <!-- Dynamic Content for specific actions (For example, Product Management) -->
+    {% block admin_dashboard_content %}
+
+    <ul>
+        {% for category in categories %}
+            <a href="{{ url_for('admin.edit_products', category_id=category.category_id) }}">
+                <li>{{ category.category_name }}</li>
+            </a>
+        {% endfor %}
+    </ul>
+    
+    <div class="container mt-4">
+        <h2 class="mb-4">Product List</h2>
+        <table class="table table-hover table-striped align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Product Category</th>
+                    <th scope="col">Product Name</th>
+                    <th scope="col">Product Description</th>
+                    <th scope="col">Price (Ksh)</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                    <tr>
+                        <td> {{ loop.index }} </td>
+    
+                        <!-- Product Image -->
+                        <td>
+                            <img src="{{ url_for('static', filename=product.product_image_path) }}" 
+                                 alt="{{ product.product_name }}" 
+                                 class="img-thumbnail" 
+                                 style="width: 100px; height: auto;">
+                        </td>
+    
+                        <!-- Product Name -->
+                        <td>{{ product.product_category }}</td>
+                    
+                        <!-- Product Name -->
+                        <td>{{ product.product_name }}</td>
+                        <!-- Product Name -->
+                        <td>{{ product.product_description }}</td>
+                        
+                        <!-- Product Cost -->
+                        <td>{{ "{:,.2f}".format(product.product_cost) }}</td>
+    
+    
+                        
+                        <!-- Edit Button -->
+                        <td>
+                            <a href="{{ url_for('admin.edit_product', product_id=product.product_id) }}" 
+                               class="btn btn-sm btn-primary">
+                               <i class="bi bi-pencil-square"></i> Edit
+                            </a>
+                        </td>
+                        
+      
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+        
+    {% endblock %}
+
+
+
+
+{% endblock %}
