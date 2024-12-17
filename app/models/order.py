@@ -4,11 +4,14 @@ from datetime import datetime
 class Order(db.Model):
     __tablename__ = 'orders'
     order_id = db.Column(db.Integer, primary_key=True)
-    customer_name = db.Column(db.String(100), nullable=False)
-    total_amount = db.Column(db.Float, nullable=False)
+    customer_name = db.Column(db.String(100), nullable=True)
+    contact_number = db.Column(db.String(15), nullable=False)
+    shipping_address = db.Column(db.String(255), nullable=False)
+    total_price = db.Column(db.Float, nullable=False)
     order_date = db.Column(db.DateTime, default=datetime.now)
     status = db.Column(db.String(20), default="Pending")
     updated_at = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now)
+
 
 
     # One-to-Many relationship to OrderItem

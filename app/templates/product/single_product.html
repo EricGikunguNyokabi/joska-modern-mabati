@@ -1,93 +1,101 @@
 {% extends "base.html" %}
 
 {% block title %}Product Details - {{ product.product_name | capitalize }}{% endblock %}
-{% block homecarousel %} {% endblock %}
+{% block homecarousel %}{% endblock %}
 
 {% block content %}
 <style>
     .card {
-        border-style: none;
+        border: none;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Slight shadow */
+        transition: box-shadow 0.3s ease-in-out;
+    }
+
+    .card:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .product-img {
+        border-radius: 10px;
+        max-height: 400px;
+        object-fit: cover;
+    }
+
+    .action-buttons a, 
+    .action-buttons button {
+        font-size: 0.9em;
     }
 </style>
 
-<div class="container">
+<div class="container mt-4">
     <!-- Breadcrumb -->
     <nav aria-label="breadcrumb">
-        <ol class="breadcrumb mt-2">
+        <ol class="breadcrumb bg-light p-2 rounded">
             <li class="breadcrumb-item"><a href="{{ url_for('ecommerce.home') }}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{{ url_for('ecommerce.home') }}">Products</a></li>
+            <li class="breadcrumb-item"><a href="{{ url_for('ecommerce.all_products') }}">Products</a></li>
             <li class="breadcrumb-item active" aria-current="page">{{ product.product_name | capitalize }}</li>
         </ol>
     </nav>
 
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card mb-3">
-                <div class="row">
-                    <div class="col-md-5">
-                        <img src="{{ url_for('static', filename=product.product_image_path.split('static/', 1)[-1]) }}" class="card-img-top" alt="{{ product.product_name }}">
-                    </div>
+    <!-- Product Details Card -->
+    <div class="card">
+        <div class="row g-0">
+            <!-- Product Image -->
+            <div class="col-md-6 p-3 d-flex align-items-center">
+                <img src="{{ url_for('static', filename=product.product_image_path.split('static/', 1)[-1]) }}"
+                     class="img-fluid product-img" 
+                     alt="{{ product.product_name }}">
+            </div>
 
-                    <div class="col-md-5 p-4">
-                        <h5><span style="font-weight: 700; font-size: 0.5em;">Product :</span> {{ product.product_name }}</h5>
-                        <p class="card-text"><span style="font-weight: 700; font-size: 0.7em;">Description :</span> {{ product.product_description }}</p>
-                        <h4 class="py-1 text-info">KSh. {{ "{:,.2f}".format(product.product_cost) }}</h4>
+            <!-- Product Info -->
+            <div class="col-md-6 p-4">
+                <h3 class="text-uppercase fw-bold text-dark">{{ product.product_name }}</h3>
+                <hr>
+                <p class="text-muted">{{ product.product_description }}</p>
+                <h4 class="text-info mb-4">KSh. {{ "{:,.2f}".format(product.product_cost) }}</h4>
 
-                        <form class="add-to-cart-form" data-product-id="{{ product.product_id }}" 
-                            style="margin: 0; padding: 0;">
-                        <button type="submit" class="btn btn-sm p-1" 
-                                style="display: inline-flex; align-items: center; justify-content: center; background: none; border: none;">
-                            <i class="bi bi-cart-plus" style="font-size: 1.5em; color: rgba(128, 0, 128, 0.8);"></i>
-                        </button>
-                    </form>
-
-                    
-                    </div>
-                </div>
-
-                <div class="card-footer">
-                    <div class="row">
-                        <div class="col mt-0 d-flex justify-content-start">
-                            <a href="{{ url_for('ecommerce.all_products') }}" class="btn btn-sm btn-primary">Back to Products</a>
-                        </div>
-                        <div class="col mt-0 d-flex justify-content-end">
-                            <a href="{{ url_for('cart.cart_content') }}" class="btn btn-sm btn-success">Go to My Cart</a>
-                        </div>
-                    </div>
-                </div>
+                <!-- Add to Cart Button -->
+                <form class="add-to-cart-form" data-product-id="{{ product.product_id }}">
+                    <button type="submit" class="btn btn-purple text-white fw-bold px-4 py-2">
+                        <i class="bi bi-cart-plus me-1"></i> Add to Cart
+                    </button>
+                </form>
             </div>
         </div>
 
-       
+        <!-- Card Footer: Navigation Buttons -->
+        <div class="card-footer bg-white action-buttons">
+            <div class="d-flex justify-content-between">
+                <a href="{{ url_for('ecommerce.all_products') }}" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-arrow-left"></i> Back to Products
+                </a>
+                <a href="{{ url_for('cart.cart_content') }}" class="btn btn-success btn-sm">
+                    <i class="bi bi-cart-fill"></i> Go to My Cart
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 
+<!-- Add to Cart Script -->
 <script>
     document.querySelectorAll('.add-to-cart-form').forEach(form => {
         form.addEventListener('submit', function(event) {
-            event.preventDefault();  // Prevent the form from submitting normally
-
+            event.preventDefault();  // Prevent normal form submission
+            
             const productId = this.dataset.productId;
 
-            // Use fetch to send a POST request to the cart route
             fetch("{{ url_for('cart.cart_content') }}", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    product_id: productId  // Send the product_id as JSON
-                })
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ product_id: productId })
             })
             .then(response => response.json())
             .then(data => {
-                // Optionally update the UI, e.g., show a notification or update cart counter
-                console.log(data.message || "Product added to cart!");
+                alert(data.message || "Product added to cart!");
             })
             .catch(error => console.error('Error:', error));
         });
     });
 </script>
-
-
 {% endblock %}
