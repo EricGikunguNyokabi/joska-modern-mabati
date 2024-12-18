@@ -121,11 +121,35 @@
             </li>
         </ul>
         <!-- Cart at the End -->
+
         <div class="ms-auto">
             <a class="nav-link" href="{{ url_for('cart.cart_content') }}">
-                <i class="fas fa-shopping-cart"></i> Cart
+                <i class="fas fa-shopping-cart"></i> Cart 
+                <span class="badge bg-primary text-white" id="cart-count">{{ item_count or 0 }}</span>
             </a>
         </div>
+
+        <script>
+            async function updateCartCount() {
+                try {
+                    const response = await fetch("{{ url_for('cart.cart_count') }}");
+                    const data = await response.json();
+                    const cartCountElement = document.getElementById("cart-count");
+                    if (cartCountElement && data.count !== undefined) {
+                        cartCountElement.textContent = data.count;
+                    }
+                } catch (error) {
+                    console.error("Error fetching cart count:", error);
+                }
+            }
+        
+            // Call this function on page load or when updating the cart
+            document.addEventListener("DOMContentLoaded", updateCartCount);
+
+            setInterval(updateCartCount, 100); // Refresh cart count every 10 seconds
+        </script>
+
+
     </div>
 </nav>
 

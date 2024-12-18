@@ -10,63 +10,143 @@ from app import db, mail
 from twilio.rest import Client
 from flask import current_app
 
-
 cart = Blueprint("cart", __name__)
 
-# View for showing the cart contents
+
+# Helper function to get total cart item count
+def get_cart_item_count():
+    if "cart" in session:
+        return sum(item["quantity"] for item in session["cart"])
+    return 0
+
+
+# Endpoint to fetch real-time cart item count
+# @cart.route("/cart-count", methods=["GET"])
+# def cart_count():
+#     item_count = get_cart_item_count()
+#     return jsonify({"count": item_count}), 200
+@cart.route("/cart-count", methods=["GET"])
+def cart_count():
+    item_count = sum(item["quantity"] for item in session.get("cart", []))
+    return jsonify({"count": item_count}), 200
+
+
+# if request.is_json:
+#     item_count = sum(item["quantity"] for item in session.get("cart", []))
+#     return jsonify({
+#         "message": "Product added to cart!",
+#         "item_count": item_count  # Include updated cart count
+#     }), 200
+
+
+# View for handling cart operations and displaying the cart
+# @cart.route("/cart", methods=["GET", "POST"])
+# def cart_content():
+#     # Ensure cart exists in the session
+#     if "cart" not in session:
+#         session["cart"] = []  # Initialize as an empty list
+
+#     # Handle POST request to add a product to the cart
+#     if request.method == "POST":
+#         if request.is_json:
+#             data = request.get_json()
+#             product_id = data.get("product_id")
+#         else:
+#             product_id = request.form.get("product_id")
+
+#         if product_id:
+#             product = Product.query.filter_by(product_id=product_id).first()  # Retrieve the product
+#             if product:
+#                 product_exists = False
+#                 for item in session["cart"]:
+#                     if item["product_id"] == product.product_id:
+#                         item["quantity"] += 1  # Increment quantity
+#                         product_exists = True
+#                         break
+
+#                 if not product_exists:
+#                     session["cart"].append({
+#                         "product_id": product.product_id,
+#                         "product_image_path": product.product_image_path,
+#                         "name": product.product_name,
+#                         "price": product.product_cost,
+#                         "quantity": 1  # Default quantity
+#                     })
+
+#                 session.modified = True  # Mark session as modified
+
+#                 if request.is_json:
+#                     # Return success response with updated cart count
+#                     return jsonify({
+#                         "message": "Product added to cart!",
+#                         "item_count": get_cart_item_count()
+#                     }), 200
+#                 else:
+#                     return redirect(url_for("cart.cart_content"))
+
+#     # For GET requests: display cart content
+#     cart_items = session.get("cart", [])
+#     total_price = sum(item["price"] * item["quantity"] for item in cart_items)
+
+#     return render_template(
+#         "product/cart/cart.html",
+#         cart_items=cart_items,
+#         total_price=total_price,
+#         item_count=get_cart_item_count(),  # Pass cart count to template
+#     )
 @cart.route("/cart", methods=["GET", "POST"])
 def cart_content():
-    # Ensure cart exists in the session
     if "cart" not in session:
-        session["cart"] = []  # Initialize as an empty list
+        session["cart"] = []
 
-    # Handle POST request to add a product to the cart
     if request.method == "POST":
-        # Check for JSON data (for AJAX)
         if request.is_json:
             data = request.get_json()
             product_id = data.get("product_id")
         else:
-            # Handle form submission (standard POST request)
             product_id = request.form.get("product_id")
 
         if product_id:
-            product = Product.query.filter_by(product_id=product_id).first()  # Retrieve the product
+            product = Product.query.filter_by(product_id=product_id).first()
             if product:
-                # Check if the product already exists in the cart (by product_id)
                 product_exists = False
                 for item in session["cart"]:
                     if item["product_id"] == product.product_id:
-                        item["quantity"] += 1  # Increase the quantity
+                        item["quantity"] += 1
                         product_exists = True
                         break
 
                 if not product_exists:
-                    # Add the product to the cart if it doesn't exist yet
                     session["cart"].append({
                         "product_id": product.product_id,
                         "product_image_path": product.product_image_path,
                         "name": product.product_name,
                         "price": product.product_cost,
-                        "quantity": 1  # Set initial quantity
+                        "quantity": 1
                     })
 
-                session.modified = True  # Mark session as modified
+                session.modified = True
 
                 if request.is_json:
-                    return jsonify({"message": "Product added to cart!"}), 200
+                    # This block and return must be inside the function!
+                    item_count = sum(item["quantity"] for item in session.get("cart", []))
+                    return jsonify({
+                        "message": "Product added to cart!",
+                        "item_count": item_count
+                    }), 200
                 else:
-                    return redirect(url_for("cart.cart_content"))  # For non-AJAX requests
+                    return redirect(url_for("cart.cart_content"))
 
-    # Handle GET request to view the cart
     cart_items = session.get("cart", [])
-    
-    # Calculate total price for the cart
     total_price = sum(item["price"] * item["quantity"] for item in cart_items)
+    item_count = sum(item["quantity"] for item in cart_items)
 
-    item = products = Product.query.all()
-    return render_template("product/cart/cart.html", cart_items=cart_items, item=item, total_price=total_price)
-
+    return render_template(
+        "product/cart/cart.html",
+        cart_items=cart_items,
+        total_price=total_price,
+        item_count=item_count
+    )
 
 
 
