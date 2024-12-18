@@ -131,7 +131,7 @@ def cart_content():
                     # This block and return must be inside the function!
                     item_count = sum(item["quantity"] for item in session.get("cart", []))
                     return jsonify({
-                        "message": "Product added to cart!",
+                        # "message": "Product added to cart!",
                         "item_count": item_count
                     }), 200
                 else:
@@ -147,6 +147,43 @@ def cart_content():
         total_price=total_price,
         item_count=item_count
     )
+
+
+
+@cart.route('/increment-cart-item', methods=['POST'])
+def increment_cart_item():
+    data = request.get_json()
+
+    product_id = data.get('product_id')
+    quantity = data.get('quantity')
+
+    # Log the incoming request data for debugging
+    cart.logger.debug(f"Product ID: {product_id}, Quantity: {quantity}")
+
+    # Retrieve the cart from the session, if it exists
+    cart = session.get('cart', {})
+
+    # Log the cart to debug its contents
+    cart.logger.debug(f"Cart Contents: {cart}")
+
+    if product_id in cart:
+        cart_item = cart[product_id]
+        cart_item['quantity'] = quantity  # Update quantity
+        cart[product_id] = cart_item  # Save updated item in cart
+        session['cart'] = cart  # Save the updated cart
+        
+        # Calculate total price and item count
+        total_price = sum(item['price'] * item['quantity'] for item in cart.values())
+        item_count = sum(item['quantity'] for item in cart.values())
+
+        return jsonify({'success': True, 'total_price': total_price, 'item_count': item_count})
+    else:
+        cart.logger.debug(f"Item not found in cart for product_id {product_id}")
+        return jsonify({'success': False, 'message': 'Item not found in cart'}), 404
+
+
+
+
 
 
 
@@ -190,7 +227,7 @@ def place_order():
 
 
 
-def send_whatsapp_message(order_details, recipient):
+def cartapp_message(order_details, recipient):
     client = Client(current_app.config["TWILIO_ACCOUNT_SID"], current_app.config["TWILIO_AUTH_TOKEN"])
 
     # Generate message body
