@@ -94,6 +94,8 @@ def cart_count():
 #         total_price=total_price,
 #         item_count=get_cart_item_count(),  # Pass cart count to template
 #     )
+
+
 @cart.route("/cart", methods=["GET", "POST"])
 def cart_content():
     if "cart" not in session:
