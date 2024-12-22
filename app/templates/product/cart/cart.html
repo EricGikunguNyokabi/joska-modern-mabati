@@ -8,87 +8,72 @@
     <h2 class="mb-2" style="font-family: monospace; font-weight: 900;">Your Shopping Cart</h2>
 
     {% if cart_items %}
-        <!-- Clear Cart Button -->
-        <div class="d-flex justify-content-end mb-3">
-            <form action="{{ url_for('cart.clear_cart') }}" method="POST" onsubmit="return confirm('Are you sure you want to remove ALL items from the cart?');">
-                <button type="submit" class="btn btn-sm btn-danger">
-                    <i class="bi bi-trash-fill"></i> Clear Cart
-                </button>
-            </form>
+        <!-- Cart table -->
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col" class="text-center">#</th>
+                    <th scope="col">Product</th>
+                    <th scope="col" class="text-center">Image</th>
+                    <th scope="col" class="text-center">Price</th>
+                    <th scope="col" class="text-center">Quantity</th>
+                    <th scope="col" class="text-center">Total</th>
+                    <th scope="col" class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr id="cart-item-{{ item.product_id }}">
+                    <td>{{ loop.index }}</td>
+                    <td>{{ item.name }}</td>
+                    <td class="text-center">
+                        <img src="{{ url_for('static', filename=item.product_image_path) }}" 
+                             alt="{{ item.name }}" 
+                             style="width:fit-width; height:70px; object-fit: cover; border-radius: 5px;">
+                    </td>
+                    <td>KSh {{ "{:,.2f}".format(item.price) }}</td>
+
+                    <!-- Deduct And Add Buttons -->
+                    <td class="text-center">
+                        <div class="d-flex justify-content-center align-items-center">
+                            <button class="btn btn-s btn-outline-danger update-quantity-btn me-2" 
+                                data-product-id="{{ item.product_id }}" 
+                                data-action="decrement">-</button>
+                        <span id="quantity-{{ item.product_id }}">{{ item.quantity }}</span>
+                        <button class="btn btn-s btn-outline-primary update-quantity-btn ms-2" 
+                                data-product-id="{{ item.product_id }}" 
+                                data-action="increment">+</button>
+                        </div>
+                        
+                    </td>
+
+
+                    <td id="item-total-{{ item.product_id }}">KSh {{ "{:,.2f}".format(item.price * item.quantity) }}</td>
+                    <td>
+                        <form action="{{ url_for('cart.remove_from_cart', product_id=item.product_id) }}" method="POST" 
+                              onsubmit="return confirm('Remove this item from your cart?');">
+                            <button type="submit" class="btn btn-danger">Remove</button>
+                        </form>
+                    </td>
+
+
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="5">Total</th>
+                    <th id="total-price" colspan="2">KSh {{ "{:,.2f}".format(total_price) }}</th>
+                </tr>
+            </tfoot>
+        </table>
+
+        <!-- Navigation buttons -->
+        <div>
+            <a href="{{ url_for('ecommerce.home') }}" class="btn btn-primary">Continue Shopping</a>
+            <a href="{{ url_for('cart.place_order') }}" class="btn btn-success">Checkout</a>
         </div>
-
-        <!-- Cart Table -->
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th scope="col" class="text-center">#</th>
-                        <th scope="col">Product</th>
-                        <th scope="col" class="text-center">Image</th>
-                        <th scope="col" class="text-center">Price</th>
-                        <th scope="col" class="text-center">Quantity</th>
-                        <th scope="col" class="text-center">Total</th>
-                        <th scope="col" class="text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in cart_items %}
-                        <tr>
-                            <th scope="row" class="text-center">{{ loop.index }}</th>
-                            <td>{{ item.name }}</td>
-                            <td class="text-center">
-                                <img src="{{ url_for('static', filename=item.product_image_path) }}" 
-                                     alt="{{ item.name }}" 
-                                     style="width: 70px; height: 70px; object-fit: cover; border-radius: 5px;">
-                            </td>
-                            <td class="text-center">KSh {{ "{:,.2f}".format(item.price) }}</td>
-
-                            <td class="text-center">
-                                <div class="d-flex justify-content-center align-items-center">
-                                    <!-- Decrement Button -->
-                                    <button class="btn btn-sm btn-outline-danger me-2 update-quantity-btn" 
-                                            data-product-id="{{ item.product_id }}" data-action="decrement">-</button>
-                                    <span class="mx-2 quantity-value" id="quantity-{{ item.product_id }}">{{ item.quantity }}</span>
-                                    
-                                    <!-- Add to Cart Button - initially '+', but will update after added -->
-                                    <button class="btn btn-sm btn-outline-primary ms-2 add-to-cart-btn" 
-                                            data-product-id="{{ item.product_id }}" data-action="increment">
-                                        <i class="bi bi-cart-plus" style="font-size: 1.5em;"></i>
-                                    </button>
-                                </div>
-                            </td>
-                            
-                            <td class="text-center">KSh {{ "{:,.2f}".format(item.price * item.quantity) }}</td>
-                            <td class="text-center">
-                                <!-- Form to remove the product -->
-                                <form action="{{ url_for('cart.remove_from_cart', product_id=item.product_id) }}" method="POST" 
-                                    onsubmit="return confirm('Are you sure you want to remove this item from your cart?');">
-                                    <button type="submit" class="btn btn-sm btn-danger">Remove</button>
-                                </form>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="5" class="text-end fw-bold">Total Price:</td>
-                        <td colspan="2" class="text-center fw-bold">KSh {{ "{:,.2f}".format(total_price) }}</td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
-
-        <!-- Navigation Buttons -->
-        <div class="d-flex justify-content-between mt-4">
-            <a href="{{ url_for('ecommerce.home') }}" class="btn btn-outline-primary">
-                <i class="bi bi-arrow-left"></i> Continue Shopping
-            </a>
-            <a href="{{ url_for('cart.place_order') }}" class="btn btn-success">
-                <i class="bi bi-check-circle"></i> Place Your Order
-            </a>
-        </div>
-
-    {% else %}
+        {% else %}
         <!-- Empty Cart -->
         <div class="alert alert-warning text-center" role="alert">
             Your cart is currently empty!
@@ -102,93 +87,46 @@
 </div>
 
 <script>
-    document.querySelectorAll('.add-to-cart-btn').forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault();  // Prevent default action
+document.querySelectorAll('.update-quantity-btn').forEach(button => {
+    button.addEventListener('click', event => {
+        event.preventDefault();
 
-            const productId = this.dataset.productId;
+        const productId = button.dataset.productId;
+        const action = button.dataset.action;
 
-            fetch("{{ url_for('cart.cart_content') }}", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    product_id: productId
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Update the quantity for this product in the UI
-                    const quantityElement = document.getElementById(`quantity-${productId}`);
-                    quantityElement.textContent = data.new_quantity;  // Update quantity
+        fetch("{{ url_for('cart.cart_content') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ product_id: productId, action: action })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update the cart item details
+                document.getElementById(`quantity-${productId}`).textContent = data.updated_quantity;
+                document.getElementById(`item-total-${productId}`).textContent = `KSh ${data.updated_item_total.toFixed(2)}`;
+                document.getElementById('total-price').textContent = `KSh ${data.new_total_price.toFixed(2)}`;
+                
+                // Remove the item row if quantity becomes 0
+                if (data.updated_quantity === 0) {
+                    document.getElementById(`cart-item-${productId}`).remove();
+                }
 
-                    // Change the + button to another state (disabled or updated icon)
-                    // Optionally change this to a cart icon if item has been added
-
-                } //else {
-                //     alert(data.message || "Error updating cart");
-                // }
-            })
-            .catch(error => console.error('Error:', error));
-        });
+                // Show empty cart message if cart becomes empty
+                if (data.cart_empty) {
+                    document.querySelector('.container').innerHTML = `
+                        <p>Your cart is empty.</p>
+                        <a href="{{ url_for('ecommerce.home') }}" class="btn btn-primary">Start Shopping</a>
+                    `;
+                }
+            } else {
+                alert(data.message || "An error occurred.");
+            }
+        })
+        .catch(error => console.error("Error:", error));
     });
-    // setInterval(updateCartCount, 10); // Refresh cart count every _ seconds
-
-    document.addEventListener("DOMContentLoaded", function() {
-    updateCartContents();
 });
-
-
 </script>
 {% endblock %}
-
-
-<!-- <script>
-    // Handle update of quantity
-    document.querySelectorAll('.update-quantity-btn').forEach(button => {
-        button.addEventListener('click', function(event) {
-            event.preventDefault();
-            const productId = this.dataset.productId;
-            const action = this.dataset.action;
-
-            // Get the current quantity
-            const quantitySpan = document.getElementById(`quantity-${productId}`);
-            let currentQuantity = parseInt(quantitySpan.textContent);
-
-            if (action === "increment") {
-                currentQuantity++;  // Increment by 1
-            } else if (action === "decrement" && currentQuantity > 1) {
-                currentQuantity--;  // Decrement by 1
-            }
-
-            // Update the displayed quantity
-            quantitySpan.textContent = currentQuantity;
-
-            // Send updated quantity to backend
-            fetch("/increment-cart-item", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    product_id: productId,
-                    quantity: currentQuantity
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Update the total price and item count in the cart
-                if (data.success) {
-                    document.querySelector('.total-price').textContent = `KSh ${data.total_price.toFixed(2)}`;
-                } else {
-                    alert(data.message || 'Error updating cart');
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        });
-    });
-</script> -->
-
-

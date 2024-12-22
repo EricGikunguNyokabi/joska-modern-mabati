@@ -95,61 +95,255 @@ def cart_count():
 #         item_count=get_cart_item_count(),  # Pass cart count to template
 #     )
 
+# WORKING PROPERY FOR ADDING PRODUCT IN CART
+# @cart.route("/cart", methods=["GET", "POST"])
+# def cart_content():
+#     if "cart" not in session:
+#         session["cart"] = []
 
+#     if request.method == "POST":
+#         if request.is_json:
+#             data = request.get_json()
+#             product_id = data.get("product_id")
+#         else:
+#             product_id = request.form.get("product_id")
+
+#         if product_id:
+#             product = Product.query.filter_by(product_id=product_id).first()
+#             if product:
+#                 product_exists = False
+#                 for item in session["cart"]:
+#                     if item["product_id"] == product.product_id:
+#                         item["quantity"] += 1
+#                         product_exists = True
+#                         break
+
+#                 if not product_exists:
+#                     session["cart"].append({
+#                         "product_id": product.product_id,
+#                         "product_image_path": product.product_image_path,
+#                         "name": product.product_name,
+#                         "price": product.product_cost,
+#                         "quantity": 1
+#                     })
+
+#                 session.modified = True
+
+#                 if request.is_json:
+#                     # This block and return must be inside the function!
+#                     item_count = sum(item["quantity"] for item in session.get("cart", []))
+#                     return jsonify({
+#                         # "message": "Product added to cart!",
+#                         "item_count": item_count
+#                     }), 200
+#                 else:
+#                     return redirect(url_for("cart.cart_content"))
+
+#     cart_items = session.get("cart", [])
+#     total_price = sum(item["price"] * item["quantity"] for item in cart_items)
+#     item_count = sum(item["quantity"] for item in cart_items)
+
+#     return render_template(
+#         "product/cart/cart.html",
+#         cart_items=cart_items,
+#         total_price=total_price,
+#         item_count=item_count
+#     )
+# @cart.route("/cart", methods=["GET", "POST"])
+# def cart_content():
+#     if "cart" not in session:
+#         session["cart"] = []
+
+#     if request.method == "GET":
+#         total_price = sum(item["price"] * item["quantity"] for item in session["cart"])
+#         return render_template(
+#             "product/cart/cart.html",
+#             cart_items=session["cart"],
+#             total_price=total_price,
+#             success=True,
+#         )
+
+#     if request.method == "POST" and request.is_json:
+#         data = request.get_json()
+#         product_id = data.get("product_id")
+#         action = data.get("action", "increment")  # Default to "increment" if not provided
+
+#         if product_id:
+#             product = Product.query.filter_by(product_id=product_id).first()
+#             if product:
+#                 for item in session["cart"]:
+#                     if item["product_id"] == product.product_id:
+#                         if action == "increment":
+#                             item["quantity"] += 1
+#                         elif action == "decrement" and item["quantity"] > 0:
+#                             item["quantity"] -= 1
+                        
+#                         # Remove item if quantity is zero
+#                         if item["quantity"] == 0:
+#                             session["cart"].remove(item)
+
+#                         session.modified = True
+
+#                         # Calculate updated data for response
+#                         updated_quantity = item["quantity"]
+#                         updated_item_total = item["price"] * item["quantity"] if updated_quantity > 0 else 0
+#                         total_price = sum(it["price"] * it["quantity"] for it in session["cart"])
+#                         cart_empty = len(session["cart"]) == 0
+
+#                         return jsonify({
+#                             "success": True,
+#                             "updated_quantity": updated_quantity,
+#                             "updated_item_total": updated_item_total,
+#                             "new_total_price": total_price,
+#                             "cart_empty": cart_empty
+#                         }), 200
+
+#                 # Item not found
+#                 return jsonify({"success": False, "message": "Item not found in cart."}), 404
+
+#     return jsonify({"success": False, "message": "Invalid request."}), 400
 @cart.route("/cart", methods=["GET", "POST"])
 def cart_content():
     if "cart" not in session:
         session["cart"] = []
 
-    if request.method == "POST":
-        if request.is_json:
-            data = request.get_json()
-            product_id = data.get("product_id")
-        else:
-            product_id = request.form.get("product_id")
+    if request.method == "GET":
+        total_price = sum(item["price"] * item["quantity"] for item in session["cart"])
+        return render_template(
+            "product/cart/cart.html",
+            cart_items=session["cart"],
+            total_price=total_price,
+            success=True,
+        )
+
+    if request.method == "POST" and request.is_json:
+        data = request.get_json()
+        product_id = data.get("product_id")
+        action = data.get("action", "increment")  # Default to "increment" if not provided
 
         if product_id:
             product = Product.query.filter_by(product_id=product_id).first()
             if product:
-                product_exists = False
+                item_found = False
                 for item in session["cart"]:
                     if item["product_id"] == product.product_id:
-                        item["quantity"] += 1
-                        product_exists = True
-                        break
+                        item_found = True
+                        if action == "increment":
+                            item["quantity"] += 1
+                        elif action == "decrement" and item["quantity"] > 0:
+                            item["quantity"] -= 1
+                        
+                        # Remove item if quantity is zero
+                        if item["quantity"] == 0:
+                            session["cart"].remove(item)
 
-                if not product_exists:
-                    session["cart"].append({
-                        "product_id": product.product_id,
-                        "product_image_path": product.product_image_path,
-                        "name": product.product_name,
-                        "price": product.product_cost,
-                        "quantity": 1
-                    })
+                        session.modified = True
 
+                        # Calculate updated data for response
+                        updated_quantity = item["quantity"]
+                        updated_item_total = item["price"] * item["quantity"] if updated_quantity > 0 else 0
+                        total_price = sum(it["price"] * it["quantity"] for it in session["cart"])
+                        cart_empty = len(session["cart"]) == 0
+
+                        return jsonify({
+                            "success": True,
+                            "updated_quantity": updated_quantity,
+                            "updated_item_total": updated_item_total,
+                            "new_total_price": total_price,
+                            "cart_empty": cart_empty
+                        }), 200
+
+                # If product is not found in the cart, initialize with 1 quantity (adding it)
+                session["cart"].append({
+                    "product_id": product.product_id,
+                    "product_image_path":product.product_image_path,
+                    "name": product.product_name,
+                    "price": product.product_cost,
+                    "quantity": 1
+                })
                 session.modified = True
 
-                if request.is_json:
-                    # This block and return must be inside the function!
-                    item_count = sum(item["quantity"] for item in session.get("cart", []))
-                    return jsonify({
-                        # "message": "Product added to cart!",
-                        "item_count": item_count
-                    }), 200
-                else:
-                    return redirect(url_for("cart.cart_content"))
+                return jsonify({
+                    "success": True,
+                    "message": "Item added to cart (with zero quantity)."
+                })
 
-    cart_items = session.get("cart", [])
-    total_price = sum(item["price"] * item["quantity"] for item in cart_items)
-    item_count = sum(item["quantity"] for item in cart_items)
+    return jsonify({"success": False, "message": "Invalid request."}), 400
 
-    return render_template(
-        "product/cart/cart.html",
-        cart_items=cart_items,
-        total_price=total_price,
-        item_count=item_count
-    )
 
+
+
+# WORKING PROPERY FOR BOTH ADD + DEDUCT
+# @cart.route("/cart", methods=["GET", "POST"])
+# def cart_content():
+#     if "cart" not in session:
+#         session["cart"] = []
+
+#     if request.method == "POST":
+#         if request.is_json:
+#             data = request.get_json()
+#             product_id = data.get("product_id")
+#             action = data.get("action", "increment")  # Default to "increment" if action is not provided
+#         else:
+#             product_id = request.form.get("product_id")
+#             action = request.form.get("action", "increment")
+
+#         if product_id:
+#             product = Product.query.filter_by(product_id=product_id).first()
+#             if product:
+#                 if action == "increment":
+#                     # Increment logic
+#                     product_exists = False
+#                     for item in session["cart"]:
+#                         if item["product_id"] == product.product_id:
+#                             item["quantity"] += 1
+#                             product_exists = True
+#                             break
+
+#                     if not product_exists:
+#                         session["cart"].append({
+#                             "product_id": product.product_id,
+#                             "product_image_path": product.product_image_path,
+#                             "name": product.product_name,
+#                             "price": product.product_cost,
+#                             "quantity": 1
+#                         })
+
+#                 elif action == "decrement":
+#                     # Decrement logic
+#                     for item in session["cart"]:
+#                         if item["product_id"] == product.product_id:
+#                             if item["quantity"] > 1:
+#                                 item["quantity"] -= 1
+#                             else:
+#                                 # Remove the item from the cart if quantity reaches zero
+#                                 session["cart"].remove(item)
+#                             break
+
+#                 session.modified = True
+
+#                 if request.is_json:
+#                     # Return JSON response for successful update
+#                     item_count = sum(item["quantity"] for item in session.get("cart", []))
+#                     total_price = sum(item["price"] * item["quantity"] for item in session["cart"])
+#                     return jsonify({
+#                         "success": True,
+#                         "item_count": item_count,
+#                         "new_total_price": total_price
+#                     }), 200
+#                 else:
+#                     return redirect(url_for("cart.cart_content"))
+
+#     cart_items = session.get("cart", [])
+#     total_price = sum(item["price"] * item["quantity"] for item in cart_items)
+#     item_count = sum(item["quantity"] for item in cart_items)
+
+#     return render_template(
+#         "product/cart/cart.html",
+#         cart_items=cart_items,
+#         total_price=total_price,
+#         item_count=item_count
+#     )
 
 
 @cart.route('/increment-cart-item', methods=['POST'])
@@ -259,6 +453,26 @@ def cartapp_message(order_details, recipient):
         print("WhatsApp message sent successfully!", message.sid)  # Log the success message
     except Exception as e:
         print(f"Failed to send WhatsApp message: {e}")
+
+
+
+@cart.route('/send-whatsapp')
+def send_whatsapp_message():
+    # Phone number you want to send to (must be in WhatsApp format)
+    to_phone_number = "whatsapp:+254701838170"  # Ensure this number is verified
+
+    try:
+        # Send the WhatsApp message using the Twilio client
+        message = current_app.twilio_client.messages.create(
+            body="Hello from Flask + Twilio!",  # The message body
+            from_=current_app.config['TWILIO_WHATSAPP_NUMBER'],  # Your Twilio WhatsApp number
+            to=to_phone_number  # Recipient's phone number
+        )
+        return f"Message sent successfully! Message SID: {message.sid}"
+
+    except Exception as e:
+        return f"Failed to send message. Error: {str(e)}"
+
 
 
 
@@ -393,21 +607,4 @@ def finalize_order():
 #         "product/cart/order_success.html", order_details=order_details
 #     )
 
-from flask import current_app
 
-@cart.route('/send-whatsapp')
-def send_whatsapp():
-    # Phone number you want to send to (must be in WhatsApp format)
-    to_phone_number = "whatsapp:+254701838170"  # Ensure this number is verified
-
-    try:
-        # Send the WhatsApp message using the Twilio client
-        message = current_app.twilio_client.messages.create(
-            body="Hello from Flask + Twilio!",  # The message body
-            from_=current_app.config['TWILIO_WHATSAPP_NUMBER'],  # Your Twilio WhatsApp number
-            to=to_phone_number  # Recipient's phone number
-        )
-        return f"Message sent successfully! Message SID: {message.sid}"
-
-    except Exception as e:
-        return f"Failed to send message. Error: {str(e)}"

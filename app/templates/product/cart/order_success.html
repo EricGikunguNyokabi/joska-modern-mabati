@@ -20,7 +20,7 @@
                 {% for item in order_details["cart_items"] %}
                 <li class="list-group-item d-flex justify-content-between">
                     <div>
-                        <strong>{{ item.name }}</strong>
+                        <strong>{{ item.name | title  }}</strong>
                         <span class="text-muted">(x{{ item.quantity }})</span>
                     </div>
                     <span>KSh {{ "{:,.2f}".format(item.price * item.quantity) }}</span>

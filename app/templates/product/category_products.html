@@ -40,7 +40,7 @@
                      <div class="align-items-center mt-0">
                         <h5 class="m-0 text-center flex-grow-1" 
                             style="font-family: monospace; font-size: 0.9em; font-weight: 800;">
-                            {{ product.product_name | upper }}
+                            {{ product.product_name | title  }}
                     </h5>
                     </div>
                     
@@ -54,13 +54,12 @@
                             </h5>
     
                         <!-- Basket Icon Form -->
-                        <form class="add-to-cart-form" data-product-id="{{ product.product_id }}" 
-                              style="margin: 0; padding: 0;">
-                            <button type="submit" class="btn btn-sm p-1" 
-                                    style="display: inline-flex; align-items: center; justify-content: center; background: none; border: none;">
-                                <i class="bi bi-cart-plus" style="font-size: 1.5em; color: rgba(128, 0, 128, 0.8);"></i>
-                            </button>
-                        </form>
+                    <button class="btn btn-outline-primary update-quantity-btn p-1" data-product-id="{{ product.product_id }}" data-action="increment"
+                    style="display: inline-flex; align-items: center; justify-content: center; background: none; border: none;">
+                        <i class="bi bi-cart-plus" style="font-size: 1.5em; color: rgba(128, 0, 128, 0.8);"></i>
+                    </button>
+
+
                     </div>
             </a>
 
@@ -77,30 +76,47 @@
 </div>
 
 <script>
-    document.querySelectorAll('.add-to-cart-form').forEach(form => {
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();  // Prevent the form from submitting normally
+    document.querySelectorAll('.update-quantity-btn').forEach(button => {
+    button.addEventListener('click', event => {
+        event.preventDefault();
 
-            const productId = this.dataset.productId;
+        const productId = button.dataset.productId;
+        const action = button.dataset.action;
 
-            // Use fetch to send a POST request to the cart route
-            fetch("{{ url_for('cart.cart_content') }}", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    product_id: productId  // Send the product_id as JSON
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Optionally update the UI, e.g., show a notification or update cart counter
-                console.log(data.message || "Product added to cart!");
-            })
-            .catch(error => console.error('Error:', error));
-        });
+        fetch("{{ url_for('cart.cart_content') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ product_id: productId, action: action })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update the cart item details
+                document.getElementById(`quantity-${productId}`).textContent = data.updated_quantity;
+                document.getElementById(`item-total-${productId}`).textContent = `KSh ${data.updated_item_total.toFixed(2)}`;
+                document.getElementById('total-price').textContent = `KSh ${data.new_total_price.toFixed(2)}`;
+                
+                // Remove the item row if quantity becomes 0
+                if (data.updated_quantity === 0) {
+                    document.getElementById(`cart-item-${productId}`).remove();
+                }
+
+                // Show empty cart message if cart becomes empty
+                if (data.cart_empty) {
+                    document.querySelector('.container').innerHTML = `
+                        <p>Your cart is empty.</p>
+                        <a href="{{ url_for('ecommerce.home') }}" class="btn btn-primary">Start Shopping</a>
+                    `;
+                }
+            } else {
+                alert(data.message || "An error occurred.");
+            }
+        })
+        .catch(error => console.error("Error:", error));
     });
+});
 </script>
 
 {% endblock %}
