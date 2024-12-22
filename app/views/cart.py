@@ -25,130 +25,8 @@ def get_cart_item_count():
 # def cart_count():
 #     item_count = get_cart_item_count()
 #     return jsonify({"count": item_count}), 200
-@cart.route("/cart-count", methods=["GET"])
-def cart_count():
-    item_count = sum(item["quantity"] for item in session.get("cart", []))
-    return jsonify({"count": item_count}), 200
 
 
-# if request.is_json:
-#     item_count = sum(item["quantity"] for item in session.get("cart", []))
-#     return jsonify({
-#         "message": "Product added to cart!",
-#         "item_count": item_count  # Include updated cart count
-#     }), 200
-
-
-# View for handling cart operations and displaying the cart
-# @cart.route("/cart", methods=["GET", "POST"])
-# def cart_content():
-#     # Ensure cart exists in the session
-#     if "cart" not in session:
-#         session["cart"] = []  # Initialize as an empty list
-
-#     # Handle POST request to add a product to the cart
-#     if request.method == "POST":
-#         if request.is_json:
-#             data = request.get_json()
-#             product_id = data.get("product_id")
-#         else:
-#             product_id = request.form.get("product_id")
-
-#         if product_id:
-#             product = Product.query.filter_by(product_id=product_id).first()  # Retrieve the product
-#             if product:
-#                 product_exists = False
-#                 for item in session["cart"]:
-#                     if item["product_id"] == product.product_id:
-#                         item["quantity"] += 1  # Increment quantity
-#                         product_exists = True
-#                         break
-
-#                 if not product_exists:
-#                     session["cart"].append({
-#                         "product_id": product.product_id,
-#                         "product_image_path": product.product_image_path,
-#                         "name": product.product_name,
-#                         "price": product.product_cost,
-#                         "quantity": 1  # Default quantity
-#                     })
-
-#                 session.modified = True  # Mark session as modified
-
-#                 if request.is_json:
-#                     # Return success response with updated cart count
-#                     return jsonify({
-#                         "message": "Product added to cart!",
-#                         "item_count": get_cart_item_count()
-#                     }), 200
-#                 else:
-#                     return redirect(url_for("cart.cart_content"))
-
-#     # For GET requests: display cart content
-#     cart_items = session.get("cart", [])
-#     total_price = sum(item["price"] * item["quantity"] for item in cart_items)
-
-#     return render_template(
-#         "product/cart/cart.html",
-#         cart_items=cart_items,
-#         total_price=total_price,
-#         item_count=get_cart_item_count(),  # Pass cart count to template
-#     )
-
-# WORKING PROPERY FOR ADDING PRODUCT IN CART
-# @cart.route("/cart", methods=["GET", "POST"])
-# def cart_content():
-#     if "cart" not in session:
-#         session["cart"] = []
-
-#     if request.method == "POST":
-#         if request.is_json:
-#             data = request.get_json()
-#             product_id = data.get("product_id")
-#         else:
-#             product_id = request.form.get("product_id")
-
-#         if product_id:
-#             product = Product.query.filter_by(product_id=product_id).first()
-#             if product:
-#                 product_exists = False
-#                 for item in session["cart"]:
-#                     if item["product_id"] == product.product_id:
-#                         item["quantity"] += 1
-#                         product_exists = True
-#                         break
-
-#                 if not product_exists:
-#                     session["cart"].append({
-#                         "product_id": product.product_id,
-#                         "product_image_path": product.product_image_path,
-#                         "name": product.product_name,
-#                         "price": product.product_cost,
-#                         "quantity": 1
-#                     })
-
-#                 session.modified = True
-
-#                 if request.is_json:
-#                     # This block and return must be inside the function!
-#                     item_count = sum(item["quantity"] for item in session.get("cart", []))
-#                     return jsonify({
-#                         # "message": "Product added to cart!",
-#                         "item_count": item_count
-#                     }), 200
-#                 else:
-#                     return redirect(url_for("cart.cart_content"))
-
-#     cart_items = session.get("cart", [])
-#     total_price = sum(item["price"] * item["quantity"] for item in cart_items)
-#     item_count = sum(item["quantity"] for item in cart_items)
-
-#     return render_template(
-#         "product/cart/cart.html",
-#         cart_items=cart_items,
-#         total_price=total_price,
-#         item_count=item_count
-#     )
 # @cart.route("/cart", methods=["GET", "POST"])
 # def cart_content():
 #     if "cart" not in session:
@@ -156,10 +34,17 @@ def cart_count():
 
 #     if request.method == "GET":
 #         total_price = sum(item["price"] * item["quantity"] for item in session["cart"])
+
+#         # # Calculate the total count by summing up the quantities of all items
+#         # total_cart_items = sum(item['quantity'] for item in cart)
+#         # Calculate the total count by summing up the quantities of all items
+#         total_cart_items = sum(item['quantity'] for item in session["cart"])
+        
 #         return render_template(
 #             "product/cart/cart.html",
 #             cart_items=session["cart"],
 #             total_price=total_price,
+#             total_cart_items=total_cart_items,
 #             success=True,
 #         )
 
@@ -171,8 +56,10 @@ def cart_count():
 #         if product_id:
 #             product = Product.query.filter_by(product_id=product_id).first()
 #             if product:
+#                 item_found = False
 #                 for item in session["cart"]:
 #                     if item["product_id"] == product.product_id:
+#                         item_found = True
 #                         if action == "increment":
 #                             item["quantity"] += 1
 #                         elif action == "decrement" and item["quantity"] > 0:
@@ -198,10 +85,23 @@ def cart_count():
 #                             "cart_empty": cart_empty
 #                         }), 200
 
-#                 # Item not found
-#                 return jsonify({"success": False, "message": "Item not found in cart."}), 404
+#                 # If product is not found in the cart, initialize with 1 quantity (adding it)
+#                 session["cart"].append({
+#                     "product_id": product.product_id,
+#                     "product_image_path":product.product_image_path,
+#                     "name": product.product_name,
+#                     "price": product.product_cost,
+#                     "quantity": 1
+#                 })
+#                 session.modified = True
+
+#                 return jsonify({
+#                     "success": True,
+#                     "message": "Item added to cart (with zero quantity)."
+#                 })
 
 #     return jsonify({"success": False, "message": "Invalid request."}), 400
+
 @cart.route("/cart", methods=["GET", "POST"])
 def cart_content():
     if "cart" not in session:
@@ -209,18 +109,24 @@ def cart_content():
 
     if request.method == "GET":
         total_price = sum(item["price"] * item["quantity"] for item in session["cart"])
+        # Calculate the total item count by summing the quantities of all items
+        total_cart_items = sum(item['quantity'] for item in session["cart"])
+        
+        # Render the cart template and pass the dynamic variables
         return render_template(
             "product/cart/cart.html",
             cart_items=session["cart"],
             total_price=total_price,
+            total_cart_items=total_cart_items,  # Pass the cart item count to the template
             success=True,
         )
 
     if request.method == "POST" and request.is_json:
         data = request.get_json()
         product_id = data.get("product_id")
-        action = data.get("action", "increment")  # Default to "increment" if not provided
+        action = data.get("action", "increment")  # Default to increment action if none specified
 
+        # Logic to handle adding or updating cart items
         if product_id:
             product = Product.query.filter_by(product_id=product_id).first()
             if product:
@@ -253,10 +159,10 @@ def cart_content():
                             "cart_empty": cart_empty
                         }), 200
 
-                # If product is not found in the cart, initialize with 1 quantity (adding it)
+                # If product is not already in cart, add with initial quantity of 1
                 session["cart"].append({
                     "product_id": product.product_id,
-                    "product_image_path":product.product_image_path,
+                    "product_image_path": product.product_image_path,
                     "name": product.product_name,
                     "price": product.product_cost,
                     "quantity": 1
@@ -265,117 +171,55 @@ def cart_content():
 
                 return jsonify({
                     "success": True,
-                    "message": "Item added to cart (with zero quantity)."
+                    "message": "Item added to cart."
                 })
 
     return jsonify({"success": False, "message": "Invalid request."}), 400
 
 
 
-
-# WORKING PROPERY FOR BOTH ADD + DEDUCT
-# @cart.route("/cart", methods=["GET", "POST"])
-# def cart_content():
-#     if "cart" not in session:
-#         session["cart"] = []
-
-#     if request.method == "POST":
-#         if request.is_json:
-#             data = request.get_json()
-#             product_id = data.get("product_id")
-#             action = data.get("action", "increment")  # Default to "increment" if action is not provided
-#         else:
-#             product_id = request.form.get("product_id")
-#             action = request.form.get("action", "increment")
-
-#         if product_id:
-#             product = Product.query.filter_by(product_id=product_id).first()
-#             if product:
-#                 if action == "increment":
-#                     # Increment logic
-#                     product_exists = False
-#                     for item in session["cart"]:
-#                         if item["product_id"] == product.product_id:
-#                             item["quantity"] += 1
-#                             product_exists = True
-#                             break
-
-#                     if not product_exists:
-#                         session["cart"].append({
-#                             "product_id": product.product_id,
-#                             "product_image_path": product.product_image_path,
-#                             "name": product.product_name,
-#                             "price": product.product_cost,
-#                             "quantity": 1
-#                         })
-
-#                 elif action == "decrement":
-#                     # Decrement logic
-#                     for item in session["cart"]:
-#                         if item["product_id"] == product.product_id:
-#                             if item["quantity"] > 1:
-#                                 item["quantity"] -= 1
-#                             else:
-#                                 # Remove the item from the cart if quantity reaches zero
-#                                 session["cart"].remove(item)
-#                             break
-
-#                 session.modified = True
-
-#                 if request.is_json:
-#                     # Return JSON response for successful update
-#                     item_count = sum(item["quantity"] for item in session.get("cart", []))
-#                     total_price = sum(item["price"] * item["quantity"] for item in session["cart"])
-#                     return jsonify({
-#                         "success": True,
-#                         "item_count": item_count,
-#                         "new_total_price": total_price
-#                     }), 200
-#                 else:
-#                     return redirect(url_for("cart.cart_content"))
-
-#     cart_items = session.get("cart", [])
-#     total_price = sum(item["price"] * item["quantity"] for item in cart_items)
-#     item_count = sum(item["quantity"] for item in cart_items)
-
-#     return render_template(
-#         "product/cart/cart.html",
-#         cart_items=cart_items,
-#         total_price=total_price,
-#         item_count=item_count
-#     )
+@cart.route("/cart-count", methods=["GET"])
+def cart_count():
+    # Calculate the total item count by summing the quantity of all items in the cart session
+    total_items = sum(item["quantity"] for item in session.get("cart", []))
+    
+    # Print the total cart item count to the console (for debugging)
+    print(f"total_items: {total_items}")
+    
+    # Return the count in JSON format for the AJAX call
+    return jsonify({"count": total_items}), 200
 
 
-@cart.route('/increment-cart-item', methods=['POST'])
-def increment_cart_item():
-    data = request.get_json()
+# @cart.route('/increment-cart-item', methods=['POST'])
+# def increment_cart_item():
+#     data = request.get_json()
 
-    product_id = data.get('product_id')
-    quantity = data.get('quantity')
+#     product_id = data.get('product_id')
+#     quantity = data.get('quantity')
 
-    # Log the incoming request data for debugging
-    cart.logger.debug(f"Product ID: {product_id}, Quantity: {quantity}")
+#     # Log the incoming request data for debugging
+#     cart.logger.debug(f"Product ID: {product_id}, Quantity: {quantity}")
 
-    # Retrieve the cart from the session, if it exists
-    cart = session.get('cart', {})
+#     # Retrieve the cart from the session, if it exists
+#     cart = session.get('cart', {})
 
-    # Log the cart to debug its contents
-    cart.logger.debug(f"Cart Contents: {cart}")
+#     # Log the cart to debug its contents
+#     cart.logger.debug(f"Cart Contents: {cart}")
 
-    if product_id in cart:
-        cart_item = cart[product_id]
-        cart_item['quantity'] = quantity  # Update quantity
-        cart[product_id] = cart_item  # Save updated item in cart
-        session['cart'] = cart  # Save the updated cart
+#     if product_id in cart:
+#         cart_item = cart[product_id]
+#         cart_item['quantity'] = quantity  # Update quantity
+#         cart[product_id] = cart_item  # Save updated item in cart
+#         session['cart'] = cart  # Save the updated cart
         
-        # Calculate total price and item count
-        total_price = sum(item['price'] * item['quantity'] for item in cart.values())
-        item_count = sum(item['quantity'] for item in cart.values())
+#         # Calculate total price and item count
+#         total_price = sum(item['price'] * item['quantity'] for item in cart.values())
+#         item_count = sum(item['quantity'] for item in cart.values())
 
-        return jsonify({'success': True, 'total_price': total_price, 'item_count': item_count})
-    else:
-        cart.logger.debug(f"Item not found in cart for product_id {product_id}")
-        return jsonify({'success': False, 'message': 'Item not found in cart'}), 404
+#         return jsonify({'success': True, 'total_price': total_price, 'item_count': item_count})
+#     else:
+#         cart.logger.debug(f"Item not found in cart for product_id {product_id}")
+#         return jsonify({'success': False, 'message': 'Item not found in cart'}), 404
 
 
 

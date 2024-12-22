@@ -27,7 +27,7 @@
                             <td>{{ item.name }}</td>
                             <td>{{ item.quantity }}</td>
                             <td>{{ item.price }}</td>
-                            <td>{{ item.price * item.quantity }}</td>
+                            <td style="text-align: center;">{{ "{:,.0f}".format(item.price * item.quantity) }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>

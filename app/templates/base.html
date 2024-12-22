@@ -124,10 +124,10 @@
         <div class="ms-auto">
             <a class="nav-link" href="{{ url_for('cart.cart_content') }}">
                 <i class="fas fa-shopping-cart"></i> Cart 
-                <span class="badge bg-primary text-white" id="cart-count">{{ item_count or 0 }}</span>
+                <span class="badge bg-secondary text-white" id="cart-count">{{ item_count or 0 }}</span>
             </a>
         </div>
-
+        
         <script>
             async function updateCartCount() {
                 try {
@@ -144,9 +144,11 @@
         
             // Call this function on page load or when updating the cart
             document.addEventListener("DOMContentLoaded", updateCartCount);
-
-            setInterval(updateCartCount, 100000); // Refresh cart count every 10 seconds
+        
+            // Optional: If you want the cart count to update every time an item is added or removed, use:
+            // setInterval(updateCartCount, 3000); // Update every 3 seconds
         </script>
+        
 
 
     </div>
