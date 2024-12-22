@@ -53,10 +53,14 @@
                             Ksh {{ "{:,.0f}".format(product.product_cost) }}
                             </h5>
     
-                        <!-- Basket Icon Form -->
-                    <button class="btn btn-outline-primary update-quantity-btn p-1" data-product-id="{{ product.product_id }}" data-action="increment"
+                         <!-- Add to cart Button / Shopping cart Icon -->
+                    <button class="btn btn-outline-primary update-quantity-btn p-1" 
+                    data-product-id="{{ product.product_id }}" 
+                    data-action="increment"
                     style="display: inline-flex; align-items: center; justify-content: center; background: none; border: none;">
-                        <i class="bi bi-cart-plus" style="font-size: 1.5em; color: rgba(128, 0, 128, 0.8);"></i>
+                    <i id="icon-{{ product.product_id }}" class="bi bi-cart-plus" 
+                    style="font-size: 1.5em; color: rgba(128, 0, 128, 0.8);" 
+                    onclick="changeToPlaced('{{ product.product_id }}')"></i>
                     </button>
 
 

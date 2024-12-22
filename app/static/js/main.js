@@ -39,3 +39,16 @@ document.querySelectorAll('.update-quantity-btn').forEach(button => {
         .catch(error => console.error("Error:", error));
     });
 });
+
+
+
+function changeToPlaced(productId) {
+    // Get the icon element based on product ID
+    var iconElement = document.getElementById("icon-" + productId);
+
+    // Change the color and innerHTML to reflect the state of being placed
+    if (iconElement) {
+        iconElement.style.color = "green";  // Change the color to green
+        iconElement.innerHTML = "Placed";  // Change the text to "Placed"
+    }
+    }

@@ -120,19 +120,21 @@
             </li>
         </ul>
         <!-- Cart at the End -->
-
         <div class="ms-auto">
             <a class="nav-link" href="{{ url_for('cart.cart_content') }}">
                 <i class="fas fa-shopping-cart"></i> Cart 
-                <span class="badge bg-secondary text-white" id="cart-count">{{ item_count or 0 }}</span>
+                <span class="badge bg-secondary text-white" id="cart-count">{{ item_count }}</span>
             </a>
         </div>
         
         <script>
             async function updateCartCount() {
                 try {
+                    // Fetch the current cart count from the server
                     const response = await fetch("{{ url_for('cart.cart_count') }}");
                     const data = await response.json();
+        
+                    // Get the element displaying the cart count and update it with the new count
                     const cartCountElement = document.getElementById("cart-count");
                     if (cartCountElement && data.count !== undefined) {
                         cartCountElement.textContent = data.count;
@@ -142,12 +144,29 @@
                 }
             }
         
-            // Call this function on page load or when updating the cart
-            document.addEventListener("DOMContentLoaded", updateCartCount);
+            // Function to reload the page or cart content dynamically
+            function reloadCart() {
+                window.location.href = "{{ url_for('cart.cart_content') }}";  // Reload the cart page
+            }
         
-            // Optional: If you want the cart count to update every time an item is added or removed, use:
-            // setInterval(updateCartCount, 3000); // Update every 3 seconds
+            // Adding the click event listener to each button responsible for updating cart quantities
+            document.querySelectorAll('.update-quantity-btn').forEach(button => {
+                button.addEventListener('click', event => {
+                    event.preventDefault();
+        
+                    // Your logic for updating the cart, such as increasing the quantity, etc.
+                    
+                    // After the update, call the reloadCart function to refresh the page/cart count
+                    reloadCart();
+                });
+            });
+        
+            // Call this function when the page loads to fetch the current cart count
+            document.addEventListener("DOMContentLoaded", updateCartCount);
         </script>
+        
+        
+        
         
 
 
