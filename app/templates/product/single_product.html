@@ -51,15 +51,23 @@
             <div class="col-md-6 p-4">
                 <h3 class="text-uppercase fw-bold text-dark">{{ product.product_name | title  }}</h3>
                 <hr>
-                <p class="text-muted">{{ product.product_description }}</p>
-                <h4 class="text-info mb-4">KSh. {{ "{:,.2f}".format(product.product_cost) }}</h4>
+                <p class="text-dark">{{ product.product_description }}</p>
+
+                <div class="">
+                    {% if product.product_gauge %}
+                        <p class="text-light btn btn-primary">Gauge: {{ product.product_gauge }}</p>
+                    {% endif %}
+                </div>
+
+                <h4 class="text-success mb-4">KSh. {{ "{:,.0f}".format(product.product_cost) }}</h4>
 
                  <!-- Add to cart Button / Shopping cart Icon -->
-                 <button class="btn btn-outline-primary update-quantity-btn p-1" 
+                 <button class="btn btn-lg update-quantity-btn p-1" 
                  data-product-id="{{ product.product_id }}" 
                  data-action="increment"
-                 style="display: inline-flex; align-items: center; justify-content: center; background: none; border: none;">
-                 <i id="icon-{{ product.product_id }}" class="bi bi-cart-plus" 
+                 style="display: inline-flex; align-items: center; justify-content: center; background: success; border: none;">
+                 Click to add in cart  
+                 <i id="icon-{{ product.product_id }}" class="ms-2 bi bi-cart-plus" 
                  style="font-size: 1.5em; color: rgba(128, 0, 128, 0.8);" 
                  onclick="changeToPlaced('{{ product.product_id }}')"></i>
                  </button>

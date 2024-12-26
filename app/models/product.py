@@ -19,6 +19,7 @@ class Product(db.Model):
     product_id = db.Column(db.Integer, primary_key=True)
     product_category = db.Column(db.String(100), nullable=False)
     product_category_id = db.Column(db.Integer, db.ForeignKey('categories.category_id'), nullable=False)
+    product_gauge = db.Column(db.String(255), nullable=True, default="") 
     product_name = db.Column(db.String(255), nullable=False)
     product_description = db.Column(db.Text, nullable=True)
     product_cost = db.Column(db.Float, nullable=False)
@@ -29,5 +30,3 @@ class Product(db.Model):
 
     def __repr__(self):
         return f"<Product {self.product_name}>"
-    
-    

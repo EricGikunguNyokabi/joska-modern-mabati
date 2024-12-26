@@ -44,71 +44,11 @@ def edit_products():
     return render_template("admin/edit_products.html", products=products, categories=categories)
 
 # EDIT PRODUCT ROUTE 1 BY 1
-@admin.route("/adm/product/edit/<int:product_id>", methods=["GET", "POST"])
-def edit_product(product_id):
-    # Fetch the product and all categories
-    product = Product.query.get_or_404(product_id)
-    categories = Category.query.all()
-
-    if request.method == "POST":
-        # Form fields from the request
-        product_name = request.form["product_name"]
-        product_category = request.form["product_category"]
-        product_description = request.form["product_description"]
-        product_cost = request.form["product_cost"]
-        product_image = request.files.get("product_image")  # Fetch the uploaded file if present
-
-        # Map the category name to category ID
-        category_map = {
-            "Roofing": 1,
-            "Gutter System": 2,
-            "Our Work": 3
-        }
-        product_category_id = category_map.get(product_category)
-
-        if not product_category_id:
-            flash("Invalid product category selected.", "danger")
-            return render_template("admin/edit_product_form.html", product=product, categories=categories)
-
-        # Update the product details
-        product.product_name = product_name
-        product.product_category = product_category
-        product.product_category_id = product_category_id
-        product.product_description = product_description
-        product.product_cost = product_cost
-
-        # Update the image if a new file is uploaded
-        if product_image and product_image.filename:
-            image_filename = secure_filename(product_image.filename)
-            upload_folder = current_app.config["PRODUCT_UPLOAD_FOLDER"]
-            os.makedirs(upload_folder, exist_ok=True)
-            image_path = os.path.join(upload_folder, image_filename)
-            product_image.save(image_path)
-
-            # Update the image path in the database
-            product.product_image_path = f"images/products/{image_filename}"
-
-            print(f"\n\n EDIT IMAGE {product.product_image_path}")
-
-        # Commit updates to the database
-        try:
-            db.session.commit()
-            flash("Product updated successfully!", "success")
-            return redirect(url_for("admin.edit_products"))
-        except Exception as e:
-            db.session.rollback()
-            flash(f"An error occurred while updating the product: {str(e)}", "danger")
-
-    # Render the form with pre-filled product details
-    return render_template("admin/edit_product_form.html", product=product, categories=categories)
-
 # @admin.route("/adm/product/edit/<int:product_id>", methods=["GET", "POST"])
 # def edit_product(product_id):
 #     # Fetch the product and all categories
-#     product = Product.query.get_or_404(product_id)  
+#     product = Product.query.get_or_404(product_id)
 #     categories = Category.query.all()
-
-    
 
 #     if request.method == "POST":
 #         # Form fields from the request
@@ -116,7 +56,10 @@ def edit_product(product_id):
 #         product_category = request.form["product_category"]
 #         product_description = request.form["product_description"]
 #         product_cost = request.form["product_cost"]
-#         product_image_path = request.form["product_image_path"]
+#         product_image = request.files.get("product_image")  # Fetch the uploaded file if present
+
+#         # Handle gauges selection
+#         selected_gauges = request.form.getlist("product_gauge[]")  # Get selected gauges as a list
 
 #         # Map the category name to category ID
 #         category_map = {
@@ -133,10 +76,23 @@ def edit_product(product_id):
 #         # Update the product details
 #         product.product_name = product_name
 #         product.product_category = product_category
-#         product.product_category_id = product_category_id  # Update category ID
+#         product.product_category_id = product_category_id
 #         product.product_description = product_description
 #         product.product_cost = product_cost
-#         product.product_image_path = product_image_path
+#         product.product_gauge = ",".join(selected_gauges)  # Store gauges as a comma-separated string
+
+#         # Update the image if a new file is uploaded
+#         if product_image and product_image.filename:
+#             image_filename = secure_filename(product_image.filename)
+#             upload_folder = current_app.config["PRODUCT_UPLOAD_FOLDER"]
+#             os.makedirs(upload_folder, exist_ok=True)
+#             image_path = os.path.join(upload_folder, image_filename)
+#             product_image.save(image_path)
+
+#             # Update the image path in the database
+#             product.product_image_path = f"images/products/{image_filename}"
+
+#             print(f"\n\n EDIT IMAGE {product.product_image_path}")
 
 #         # Commit updates to the database
 #         try:
@@ -149,6 +105,71 @@ def edit_product(product_id):
 
 #     # Render the form with pre-filled product details
 #     return render_template("admin/edit_product_form.html", product=product, categories=categories)
+
+@admin.route("/adm/product/edit/<int:product_id>", methods=["GET", "POST"])
+def edit_product(product_id):
+    product = Product.query.get_or_404(product_id)
+    categories = Category.query.all()
+
+    if request.method == "POST":
+        # Form fields from the request
+        product_name = request.form["product_name"]
+        product_category = request.form["product_category"]
+        product_description = request.form["product_description"]
+        product_cost = request.form["product_cost"]
+        product_image = request.files.get("product_image")
+
+        # Handle gauges selection
+        selected_gauges = request.form.getlist("product_gauge[]")  # Fetch the gauges as a list
+
+        print(f"\n\n\nselected_gauges in Admin EDit: {selected_gauges}")
+
+        # Map the category name to category ID
+        category_map = {
+            "Roofing": 1,
+            "Gutter System": 2,
+            "Our Work": 3,
+        }
+        product_category_id = category_map.get(product_category)
+
+        if not product_category_id:
+            flash("Invalid product category selected.", "danger")
+            return render_template(
+                "admin/edit_product_form.html", product=product, categories=categories
+            )
+
+        # Update product details
+        product.product_name = product_name
+        product.product_category = product_category
+        product.product_category_id = product_category_id
+        product.product_description = product_description
+        product.product_cost = product_cost
+        product.product_gauge = ",".join(selected_gauges)  # Save selected gauges as CSV
+
+        # Update the image if a new file is uploaded
+        if product_image and product_image.filename:
+            image_filename = secure_filename(product_image.filename)
+            upload_folder = current_app.config["PRODUCT_UPLOAD_FOLDER"]
+            os.makedirs(upload_folder, exist_ok=True)
+            image_path = os.path.join(upload_folder, image_filename)
+            product_image.save(image_path)
+
+            # Update the image path in the database
+            product.product_image_path = f"images/products/{image_filename}"
+
+        # Commit the changes to the database
+        try:
+            db.session.commit()
+            flash("Product updated successfully!", "success")
+            return redirect(url_for("admin.edit_products"))
+        except Exception as e:
+            db.session.rollback()
+            flash(f"An error occurred while updating the product: {str(e)}", "danger")
+
+    return render_template(
+        "admin/edit_product_form.html", product=product, categories=categories
+    )
+
 
 
 

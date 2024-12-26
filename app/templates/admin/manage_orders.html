@@ -36,7 +36,7 @@
                 <td>KES {{ "{:,.2f}".format(order.total_price|default(0)) }}</td>
                 <td>{{ order.order_date.strftime('%Y-%m-%d %H:%M:%S') if order.order_date else 'N/A' }}</td>
                 <td>
-                    <span class="badge {% if order.status == 'Seen' %}bg-warning{% elif order.status == 'Sorted' %}bg-success{% else %}bg-secondary{% endif %}">
+                    <span class="badge {% if order.status == 'Seen' %}bg-warning{% elif order.status == 'Sorted' %}bg-success{% else %}bg-primary{% endif %}">
                         {{ order.status or "Pending" }}
                     </span>
                 </td>

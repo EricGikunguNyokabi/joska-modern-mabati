@@ -10,6 +10,12 @@
             <a href="{{ url_for('ecommerce.category_products', category_id=category.category_id) }}" class="text-decoration-none text-dark">
                 <div class="card h-100 shadow-sm rounded-5">
                     <!-- Image Section -->
+                    {% if category.category_image_path %}
+                        <img src="{{ url_for('static', filename=category.category_image_path.split('static/', 1)[-1]) }}" 
+                        alt="{{ category.category_name }}" 
+                        class="card-img-top" 
+                        style="min-height: 130px; max-height: 130px; object-fit: cover;">
+                    {% endif %}
                     
 
                     <!-- Card Body -->

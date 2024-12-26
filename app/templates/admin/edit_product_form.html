@@ -42,6 +42,28 @@
                       class="form-control" rows="3">{{ product.product_description }}</textarea>
         </div>
 
+        <!-- Product Gauge -->
+        <div class="mb-3"> 
+            <label for="gauges">Select Product Gauges:</label>
+            <div>
+                <label>
+                    <input type="checkbox" name="product_gauge[]" value="28" 
+                           {% if '28' in (product.product_gauge.split(",") if product.product_gauge else []) %} checked {% endif %}>
+                    28
+                </label>
+                <label>
+                    <input type="checkbox" name="product_gauge[]" value="30" 
+                           {% if '30' in (product.product_gauge.split(",") if product.product_gauge else []) %} checked {% endif %}>
+                    30
+                </label>
+                <!-- Add more gauge values as needed -->
+            </div>
+        </div>
+        
+        
+        
+
+
         <!-- Product Cost -->
         <div class="mb-3">
             <label for="product_cost" class="form-label">Product Price (Ksh)</label>
@@ -60,8 +82,8 @@
             
         </div>
 
-         <!-- Upload New Product Image -->
-         <div class="mb-3">
+        <!-- Upload New Product Image -->
+        <div class="mb-3">
             <label for="product_image" class="form-label">Upload New Product Image</label>
             <input type="file" name="product_image" id="product_image" class="form-control">
             <small class="form-text text-muted">Upload a new image to replace the current one (optional).</small>
