@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Product - {{ product.product_name }} - {{ company_name }}{% endblock %}
+
+{% block homecarousel %}
+<!-- Optionally, add a carousel here if needed -->
+{% endblock %}
+
+{% block content %}
+    {% include 'components/_admin_layout.html' %}
+
+    {% block admin_dashboard_content %}
+<div class="container mt-4">
+    <h2 class="mb-4 text-danger" style="font-weight: 900;">Edit Product</h2>
+
+    <!-- Form to edit the product -->
+    <form method="POST" action="{{ url_for('admin.edit_product', product_id=product.product_id) }}" enctype="multipart/form-data">
+        <!-- Product Category -->
+        <div class="mb-3">
+            <label for="product_category" class="form-label">Product Category</label>
+            <select name="product_category" id="product_category" class="form-select" required>
+                {% for category in categories %}
+                    <option value="{{ category.category_name }}"
+                        {% if product.product_category == category.category_name %} selected {% endif %}>
+                        {{ category.category_name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Product Name -->
+        <div class="mb-3">
+            <label for="product_name" class="form-label">Product Name</label>
+            <input type="text" name="product_name" id="product_name" 
+                   class="form-control" value="{{ product.product_name }}" required>
+        </div>
+
+        <!-- Product Description -->
+        <div class="mb-3">
+            <label for="product_description" class="form-label">Product Description</label>
+            <textarea name="product_description" id="product_description" 
+                      class="form-control" rows="3">{{ product.product_description }}</textarea>
+        </div>
+
+        <!-- Product Cost -->
+        <div class="mb-3">
+            <label for="product_cost" class="form-label">Product Price (Ksh)</label>
+            <input type="number" name="product_cost" id="product_cost" 
+                   class="form-control" value="{{ product.product_cost }}" required>
+        </div>
+
+        <!-- Current Product Image -->
+        <div class="mb-3">
+            <label for="current_product_image" class="form-label">Current Product Image : </label>
+            {% if product.product_image_path %}
+                <img src="{{ url_for('static', filename=product.product_image_path) }}" alt="Product Image" class="img-thumbnail d-block" style="max-width: 150px;">
+            {% else %}
+                <span>No Image</span>
+            {% endif %}
+            
+        </div>
+
+         <!-- Upload New Product Image -->
+         <div class="mb-3">
+            <label for="product_image" class="form-label">Upload New Product Image</label>
+            <input type="file" name="product_image" id="product_image" class="form-control">
+            <small class="form-text text-muted">Upload a new image to replace the current one (optional).</small>
+        </div>
+
+        <!-- Form Buttons -->
+        <div class="mt-4">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-save"></i> Save Changes
+            </button>
+            <a href="{{ url_for('admin.edit_products') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+
+
+
+{% endblock %}

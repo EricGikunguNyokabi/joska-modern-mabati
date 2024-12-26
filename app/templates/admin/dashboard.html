@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - {{ company_name }}{% endblock %}
+
+{% block homecarousel %}
+<!-- Optionally, add a carousel here if needed -->
+{% endblock %}
+
+{% block content %}
+    {% include 'components/_admin_layout.html' %}
+
+    {% block admin_dashboard_content %}
+        <div class="card" style="font-family: monospace;">
+            <div class="card-body">
+                <h5 class="card-title">Quick Stats</h5>
+                <div class="container mt-5">
+                    <h2>Summary Details</h2>
+                    
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <th>Total Products</th>
+                                <td>{{ total_products }}</td>
+                            </tr>
+                            <tr>
+                                <th>Total Orders</th>
+                                <td>{{ total_orders }}</td>
+                            </tr>
+                            <!-- Uncomment the following row if Total Users needs to be displayed -->
+                            <!-- <tr>
+                                <th>Total Users</th>
+                                <td>{{ total_users }}</td>
+                            </tr> -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <hr>
+                <h5>Recent Activity</h5>
+
+                <!-- Recent Orders -->
+                <table class="table table-bordered table-striped table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col" colspan="5">Recent Orders</th>
+                        </tr>
+                        <tr>
+                            <th scope="col">Order ID</th>
+                            <th scope="col">Date and Time</th>
+                            <th scope="col">Total Amount (KES)</th>
+                            <th scope="col">Customer</th>
+                            <th scope="col">Shipping Address</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in recent_orders %}
+                            <tr>
+                                <td>{{ order.order_id }}</td>
+                                <td>{{ order.order_date.strftime("%Y-%m-%d %H:%M:%S") if order.order_date else "N/A" }}</td>
+                                <td>{{ "{:,.2f}".format(order.total_price|default(0)) }}</td>
+                                <td>{{ order.contact_number|default("Unknown") }}</td>
+                                <td>{{ order.shipping_address|default("Unknown") }}</td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center">No recent orders available.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                
+            </div>
+        </div>
+    {% endblock %}
+{% endblock %}

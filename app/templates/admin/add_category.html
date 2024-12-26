@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Add Category - {{ company_name }}{% endblock %}
+
+{% block homecarousel %} {% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <!-- Card Container -->
+            <div class="card shadow">
+                <div class="card-header text-white text-center" style="background-color: rgba(108, 117, 125, 0.8);">
+                    <h4>Add New Category</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        <!-- Category Name Input -->
+                        <div class="form-group mb-3">
+                            <label for="category_name" class="form-label">Category Name</label>
+                            <input type="text" id="category_name" name="category_name" 
+                                   class="form-control" required>
+                        </div>
+                        
+                        <!-- Category Image Input -->
+                        <div class="form-group mb-3">
+                            <label for="category_image_path" class="form-label">Category Image</label>
+                            <input type="file" id="category_image_path" name="category_image_path" 
+                                   class="form-control" required>
+                        </div>
+                        
+                        <!-- Submit Button -->
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-secondary w-100" style="background-color: rgba(108, 117, 125, 0.6);">Add Category</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

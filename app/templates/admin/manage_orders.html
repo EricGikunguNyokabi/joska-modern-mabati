@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Orders - Admin{% endblock %}
+
+{% block homecarousel %}
+<!-- Optionally, add a carousel here if needed -->
+{% endblock %}
+
+
+{% block content %}
+{% include 'components/_admin_layout.html' %}
+
+    {% block admin_dashboard_content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Manage Orders</h1>
+
+    <table class="table table-striped table-hover table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Total Amount</th>
+                <th>Date Ordered</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+   
+
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.order_id }}</td>
+                <td>{{ order.contact_number or "Unknown" }}</td>
+                <td>KES {{ "{:,.2f}".format(order.total_price|default(0)) }}</td>
+                <td>{{ order.order_date.strftime('%Y-%m-%d %H:%M:%S') if order.order_date else 'N/A' }}</td>
+                <td>
+                    <span class="badge {% if order.status == 'Seen' %}bg-warning{% elif order.status == 'Sorted' %}bg-success{% else %}bg-secondary{% endif %}">
+                        {{ order.status or "Pending" }}
+                    </span>
+                </td>
+                <td>
+                    <!-- Action Buttons -->
+                    <form method="POST" action="{{ url_for('admin.manage_orders') }}" style="display: inline;">
+                        <input type="hidden" name="order_id" value="{{ order.order_id }}">
+                        <button type="submit" name="action" value="seen" class="btn btn-sm btn-warning">Mark Seen</button>
+                        <button type="submit" name="action" value="delivered" class="btn btn-sm btn-success">Mark Delivered</button>
+                        <button type="" name="action" value="delete" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this order?');">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" class="text-center">No orders to display.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+{% endblock %}

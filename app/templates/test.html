@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+{% block homecarousel %} {% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Test Images</h2>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">No.</th>
+                <th scope="col">Category</th>
+                <th scope="col">Name</th>
+                <th scope="col">Image</th>
+                <th scope="col">Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ product.product_category }}</td>
+                <td>{{ product.product_name }}</td>
+                <td>
+                    <!-- Dynamically load the product image -->
+                    {% if product.product_image_path %}
+                    <img src="{{ url_for('static', filename=product.product_image_path) }}" alt="{{ product.product_name }}" class="img-thumbnail" style="max-width: 150px; height: auto;">
+                    {% else %}
+                    <span>No Image</span>
+                    {% endif %}
+                </td>
+                <td>{{ product.product_cost }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

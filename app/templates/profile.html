@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+{% block homecarousel %} {% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>User Profile</h2>
+    <p><strong>Username:</strong> {{ user.username }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Mobile Number:</strong> {{ user.mobile_no }}</p>
+    <p><strong>Total Purchases:</strong> Ksh {{ user.total_purchases }}</p>
+    <p><strong>Loyalty Points:</strong> {{ user.points }}</p>
+    <a href="{{ url_for('auth.logout') }}" class="btn btn-danger">Logout</a>
+</div>
+{% endblock %}

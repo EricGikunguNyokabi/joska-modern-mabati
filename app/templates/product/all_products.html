@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}Joska Modern Mabati{% endblock %}
+
+{% block homecarousel %} {% endblock %}
+
+{% block content %}
+
+
+<!-- Categories Section -->
+<div class="container mt-4 home-bg-img-2">
+    <div class="row row-cols-3 row-cols-md-3 g-4">
+        {% for category in categories %}
+        <div class="col">
+            <!-- Card Container -->
+            <a href="{{ url_for('ecommerce.category_products', category_id=category.category_id) }}" class="text-decoration-none text-dark">
+                <div class="card h-100 shadow-sm rounded-5">
+                    <!-- Image Section -->
+                    <img src="{{ url_for('static', filename=category.category_image_path.split('static/', 1)[-1]) }}" 
+                         alt="{{ category.category_name }}" 
+                         class="card-img-top" 
+                         style="min-height: 130px; max-height: 130px; object-fit: cover;">
+
+                    <!-- Card Body -->
+                    <div class="card-body py-0 d-flex align-items-center justify-content-center text-center text-light" 
+                         style="height: auto; font-family: monospace; font-size: 0.7em;background-color: rgba(128, 0, 128, 0.7);">
+                        <h5 class="card-title fw-bold m-0">{{ category.category_name | upper }}</h5>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+<!-- Header Section -->
+<div class="bg-light text-center py-1">
+    <h1 class="text-uppercase fw-bold">All Our Products</h1>
+</div>
+<!-- Product Cards -->
+<div class="row row-cols-2 row-cols-md-5 g-1 product-grid">
+    {% for product in products %}
+        <div class="col">
+            <div class="card border-1" style="padding: 5px;">
+                <a href="{{ url_for('ecommerce.single_product_detail', product_id=product.product_id) }}" 
+                   style="text-decoration: none; color: inherit;">
+                   {% if product.product_image_path %}
+                   <img src="{{ url_for('static', filename=product.product_image_path) }}" class="w-100" 
+                   alt="{{ product.product_name }}" 
+                   style="min-height: 165px; max-height: 165px;">
+                    {% else %}
+                        <span>No Image</span>
+                    {% endif %}
+                </a>
+
+                <div class="align-items-center mt-0">
+                    <h5 class="m-0 text-center flex-grow-1" 
+                        style="font-family: monospace; font-size: 0.9em; font-weight: 800;">
+                        {{ product.product_name | title  }}
+                </h5>
+                </div>
+                
+
+                <div class="d-flex justify-content-between align-items-center mt-0">
+                    
+                    <!-- Product Cost -->
+                    <h5 class="m-0 text-center flex-grow-1" 
+                        style="font-family: monospace; font-size: 0.7em; font-weight: 300; color: rgba(0,0,0,.7);">
+                        Ksh {{ "{:,.0f}".format(product.product_cost) }}
+                        </h5>
+
+                    <!-- Add to cart Button / Shopping cart Icon -->
+                    <button class="btn btn-outline-primary update-quantity-btn p-1" 
+                    data-product-id="{{ product.product_id }}" 
+                    data-action="increment"
+                    style="display: inline-flex; align-items: center; justify-content: center; background: none; border: none;">
+                    <i id="icon-{{ product.product_id }}" class="bi bi-cart-plus" 
+                    style="font-size: 1.5em; color: rgba(128, 0, 128, 0.8);" 
+                    onclick="changeToPlaced('{{ product.product_id }}')"></i>
+                    </button>
+                    
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+</div>
+
+<script>
+    document.querySelectorAll('.update-quantity-btn').forEach(button => {
+    button.addEventListener('click', event => {
+        event.preventDefault();
+
+        const productId = button.dataset.productId;
+        const action = button.dataset.action;
+
+        fetch("{{ url_for('cart.cart_content') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ product_id: productId, action: action })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update the cart item details
+                document.getElementById(`quantity-${productId}`).textContent = data.updated_quantity;
+                document.getElementById(`item-total-${productId}`).textContent = `KSh ${data.updated_item_total.toFixed(2)}`;
+                document.getElementById('total-price').textContent = `KSh ${data.new_total_price.toFixed(2)}`;
+                
+                // Remove the item row if quantity becomes 0
+                if (data.updated_quantity === 0) {
+                    document.getElementById(`cart-item-${productId}`).remove();
+                }
+
+                // Show empty cart message if cart becomes empty
+                if (data.cart_empty) {
+                    document.querySelector('.container').innerHTML = `
+                        <p>Your cart is empty.</p>
+                        <a href="{{ url_for('ecommerce.home') }}" class="btn btn-primary">Start Shopping</a>
+                    `;
+                }
+            } else {
+                alert(data.message || "An error occurred.");
+            }
+        })
+        .catch(error => console.error("Error:", error));
+    });
+});
+</script>
+
+{% endblock %}
