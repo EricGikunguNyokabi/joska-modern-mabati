@@ -12,6 +12,7 @@
     <!-- Dynamic Content for specific actions (For example, Product Management) -->
     {% block admin_dashboard_content %}
 
+<<<<<<< HEAD
     <!-- <ul>
         {% for category in categories %}
             <a href="{{ url_for('admin.edit_products', category_id=category.category_id) }}">
@@ -22,6 +23,18 @@
     
     <div class="container mt-4">
         <h2 class="mb-4 text-danger" style="font-weight: 900;">Manage Products</h2>
+=======
+    <ul>
+        {% for category in categories %}
+            <a href="{{ url_for('admin.edit_products', category_id=category.category_id) }}">
+                <li>{{ category.category_name }}</li>
+            </a>
+        {% endfor %}
+    </ul>
+    
+    <div class="container mt-4">
+        <h2 class="mb-4">Product List</h2>
+>>>>>>> 08036638e049a451e8858913f08c557d55bdd3c3
         <table class="table table-hover table-striped align-middle">
             <thead class="table-dark">
                 <tr>
@@ -41,6 +54,7 @@
     
                         <!-- Product Image -->
                         <td>
+<<<<<<< HEAD
                             {% if product.product_image_path %}
                             <img src="{{ url_for('static', filename=product.product_image_path) }}" 
                             alt="{{ product.product_name }}" 
@@ -51,6 +65,12 @@
                             {% endif %}
 
                             
+=======
+                            <img src="{{ url_for('static', filename=product.product_image_path) }}" 
+                                 alt="{{ product.product_name }}" 
+                                 class="img-thumbnail" 
+                                 style="width: 100px; height: auto;">
+>>>>>>> 08036638e049a451e8858913f08c557d55bdd3c3
                         </td>
     
                         <!-- Product Name -->
